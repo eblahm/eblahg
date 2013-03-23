@@ -1,5 +1,5 @@
 import webapp2
-from eblahm import landing, rss, search, pictures, helper, article
+from eblahg import landing, rss, search, pictures, helper, article
 
 
 app = webapp2.WSGIApplication([('/', landing.main),

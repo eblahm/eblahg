@@ -10,4 +10,4 @@ from google.appengine.api import taskqueue
 import oauth
 import render
 import logging
-from eblahm import models, tools
+from eblahg import models, tools

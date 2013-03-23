@@ -15,7 +15,7 @@ from google.appengine.api import urlfetch
 import oauth
 import logging
 import config
-from eblahm import models, tools, render
+from eblahg import models, tools, render
 
 
 

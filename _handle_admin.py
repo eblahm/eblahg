@@ -1,5 +1,5 @@
 import webapp2
-from eblahm import admin
+from eblahg import admin
 
 def http_error (h):
     h.response.out.write("404")

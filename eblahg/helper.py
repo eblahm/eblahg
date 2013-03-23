@@ -4,7 +4,7 @@ import urllib
 import urllib2
 from HTMLParser import HTMLParser
 import xml.etree.ElementTree as etree
-from eblahm import models
+from eblahg import models
 
 
 def accessdateconvert(access_date_string):
@@ -161,12 +161,12 @@ def build_db(handler):
                     if pfn.replace('"', "").strip() == "" or pfn.replace('"', "") == 'None':
                         pfn = '"untitled%i"' % (x)
                         x += 1
-                    pic_fpath = '/Users/Matt/Dropbox/eblahm/pics/%s.jpg' % (pfn.replace('"', ""))
+                    pic_fpath = '/Users/Matt/Dropbox/eblahg/pics/%s.jpg' % (pfn.replace('"', ""))
                     pic_file = file(pic_fpath, 'w')
                     pic_file.write(pic)
                     post_pics.append(pfn)
 
-            fpath = '/Users/Matt/Dropbox/eblahm/posts/%s.md' % (this_title)
+            fpath = '/Users/Matt/Dropbox/eblahg/posts/%s.md' % (this_title)
             this_file = file(fpath, 'w')
             meta = "title: %s\nslug: %s\ndate: %s\n" % (this_title, slug, this_date.strftime('%m-%d-%Y %I:%M%p').lower())
             if len(post_pics) > 0:
@@ -329,12 +329,12 @@ def build_yonant(handler):
                             if pfn.replace('"', "").strip() == '' or pfn.replace('"', "") == 'None':
                                 pfn = '"untitled%i"' % (x)
                                 x += 1
-                            pic_fpath = '/Users/Matt/Dropbox/eblahm/pics/%s.jpg' % (pfn.replace('"', ""))
+                            pic_fpath = '/Users/Matt/Dropbox/eblahg/pics/%s.jpg' % (pfn.replace('"', ""))
                             pic_file = file(pic_fpath, 'w')
                             pic_file.write(pic)
                             post_pics.append(pfn)
 
-                    fpath = '/Users/Matt/Dropbox/eblahm/posts/%s.md' % (this_title)
+                    fpath = '/Users/Matt/Dropbox/eblahg/posts/%s.md' % (this_title)
                     this_file = file(fpath, 'w')
                     meta = "title: %s\nslug: %s\ndate: %s\n" % (this_title, slug, this_date.strftime('%m-%d-%Y %I:%M%p').lower())
                     if len(post_pics) > 0:

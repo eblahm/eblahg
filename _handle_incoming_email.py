@@ -7,7 +7,7 @@ import string
 import webapp2
 from google.appengine.ext.webapp.mail_handlers import InboundMailHandler
 
-from eblahm import models
+from eblahg import models
 
 
 class LogSenderHandler(InboundMailHandler):
