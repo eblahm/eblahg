@@ -1,0 +1,37 @@
+{% extends "/templates/base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block main_container %}
+
+    <div style="text-align: center" class="row-fluid">
+        <div class="span12">
+            <h1>{{ title }}</h1>
+            <span style="padding:10px">
+            <a data-pin-config="none" href="//pinterest.com/pin/create/button/" data-pin-do="buttonBookmark" ><img src="//assets.pinterest.com/images/pidgets/pin_it_button.png" /></a>
+            </span>
+            <br>
+            <br>
+            {% if pic %}
+            <img src="/pic?k={{ pic.key() }}" alt="{{ pic.title }}">
+            {% else %}
+                    {{ all_pics }}
+            {% endif %}
+        </div>
+    </div>
+    {% if pic %}
+    <div class="row-fluid" style="padding-top:80px;">
+        <div class="span2"></div>
+        <div id="ar_comments" class="span8">
+
+            {% include "/templates/resources/disqus.html" %}
+
+        </div>
+        <div class="span2"></div>
+    </div>
+    {% endif %}
+
+
+
+    <script type="text/javascript" src="//assets.pinterest.com/js/pinit.js"></script>
+{% endblock %}

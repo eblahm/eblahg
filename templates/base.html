@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/Blog">
+
+<head>
+    <meta charset="utf-8">
+    <title>{% if title %}{{ title }} | {% endif %}{{ settings.blog_title }}</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <link href="/rss" type="application/rss+xml" rel="alternate" title="{{ settings.title }} RSS Feed" />
+
+  {% block resources %}
+
+    {% include "/templates/resources/fonts.html" %}
+    {% include "/templates/resources/jquery.html" %}
+    {% include "/templates/resources/twitter_bootstrap.html" %}
+    {% include "/templates/resources/google_analytics.html" %}
+
+    <script src="/js/main.js"></script>
+    <link href="/css/style.css" rel="stylesheet">
+
+  {% endblock %}
+
+</head>
+
+<body>
+<div class="container">
+    {% block navbar %}
+
+        <div class="navbar navbar-fixed-top">
+               <div id="my_nav" class="container">
+                        <div id="my_nav_inner" class="row">
+                            <div class="span9">
+                                <span style="font-size:25px; font-family: 'Finger Paint', cursive;"> <a href="/">{{ settings.blog_title }}</a></span>
+                                 a blog by <span id="ptrig" data-placement="bottom" rel="popover" href="#" >{{ settings.author }}</span>
+
+                            </div>
+                            <div class="span3" style="text-align:right">
+                                    <form id="search_form" method="GET" action="/search">
+                                        <input id="search" name="term" type="text" placeholder="Search..." >
+                                        <input style="display: none;" class="btn" type="submit" value="submit" />
+                                    </form>
+                            </div>
+                        </div>
+               </div>
+         </div>
+
+    {% endblock %}
+
+    <div id="main_container" class="container">
+    {% block main_container %}
+        {{ dumb_content }}
+    {% endblock %}
+    </div>
+
+</div>
+
+</body>
+</html>

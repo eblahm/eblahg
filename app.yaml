@@ -1,0 +1,41 @@
+application: eblahm
+version: 3
+runtime: python27
+api_version: 1
+threadsafe: yes
+
+handlers:
+- url: /css
+  static_dir: css
+- url: /js
+  static_dir: js
+- url: /img
+  static_dir: img
+
+- url: /favicon\.ico
+  static_files: favicon.ico
+  upload: favicon\.ico
+
+- url: /admin.*
+  script: _handle_admin.app
+  login: admin
+  secure: always
+
+- url: /_ah/mail/postme@eblahm\.appspotmail\.com
+  script: _handle_incoming_email.app
+  login: admin
+
+- url: .*
+  script: _handle_main.app
+
+inbound_services:
+- mail
+
+libraries:
+- name: webapp2
+  version: "2.5.1"
+- name: jinja2
+  version: "2.6"
+
+builtins:
+- remote_api: on

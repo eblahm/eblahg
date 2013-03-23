@@ -1,0 +1,17 @@
+{% extends "/templates/base.html" %}
+
+{%  block main_container %}
+<h1>Config</h1>
+<form class="navbar-form" action='/admin/config' method="POST">
+    <strong>Blog Title: </strong><input name="blog_title" type="text"{% if settings.blog_title %} value="{{ settings.blog_title }}"{% endif %}><br>
+    <strong>author: </strong><input name="author" type="text"{% if settings.author %} value="{{ settings.author }}"{% endif %}><br>
+    <strong>email: </strong><input name="email" type="text"{% if settings.email %} value="{{ settings.email }}"{% endif %}><br>
+    <strong>base url: </strong><input name="url" type="text"{% if settings.url %} value="{{ settings.url }}"{% endif %}> ie.  http://yourappid.appspot.com<br>
+    <strong>Google Analytics ID: </strong><input name="google_analytics" type="text"{% if settings.google_analytics %} value="{{ settings.google_analytics }}"{% endif %}><br>
+    <strong>Dropbox App Key: </strong><input name="dropbox_app_key" type="text"{% if settings.dropbox_app_key %} value="{{ settings.dropbox_app_key }}"{% endif %}><br>
+    <strong>Dropbox App Secret: </strong><input name="dropbox_app_secret" type="text"{% if settings.dropbox_app_secret %} value="{{ settings.dropbox_app_secret }}"{% endif %}><br>
+<input type="submit" value="Save">
+
+</form>
+
+{% endblock %}
