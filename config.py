@@ -3,7 +3,7 @@ from google.appengine.api import memcache
 from google.appengine.ext import db
 
 APP_ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
-APP_URL = 'http://eblahm.appspot.com/'
+APP_URL = 'http://eblahm.appspot.com'
 
 # input data to datastore using the form @ /admin/config
 
