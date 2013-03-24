@@ -21,8 +21,9 @@ class main(webapp2.RequestHandler):
 
         rss_items = []
         for post in posts:
+            this_link = SETTINGS.url + "/posts/" + post.slug
             item = PyRSS2Gen.RSSItem(title=post.title,
-                                     link="%s%s" % (SETTINGS.url, str(post.key().name())),
+                                     link=this_link,
                                      description=post.body_html,
                                      guid="",
                                      pubDate=post.pub_date
@@ -31,7 +32,7 @@ class main(webapp2.RequestHandler):
 
         rss = PyRSS2Gen.RSS2(title=SETTINGS.blog_title,
                              link=SETTINGS.url,
-                             description="",
+                             description="a blog by Matt Halbe",
                              lastBuildDate=datetime.datetime.now(),
                              items=rss_items
         )
