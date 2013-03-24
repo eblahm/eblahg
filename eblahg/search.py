@@ -3,6 +3,7 @@ import re
 import render
 import tools
 import random
+import pictures
 from google.appengine.ext import db
 from google.appengine.api import search
 __author__ = 'Matt'
@@ -61,6 +62,7 @@ class term(webapp2.RequestHandler):
         v = {"results":posts}
         v['random'] = random.randint(1, 1500)
         v['title'] = "Search Results"
+        v = pictures.random_pic_update(v)
         render.page(self, "/templates/main/landing.html", v)
 
 class tag(webapp2.RequestHandler):

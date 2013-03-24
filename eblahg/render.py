@@ -1,12 +1,10 @@
 import jinja2
 import config
-from google.appengine.api import memcache
 from google.appengine.ext import db
 
 __author__ = 'Matt'
 
 jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(config.APP_ROOT_DIR))
-
 
 
 def page(handler, template_file, values={}):

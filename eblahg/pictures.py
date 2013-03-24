@@ -1,6 +1,8 @@
 import webapp2
 import models
 import logging
+import tools
+import random
 import render
 import urllib
 from google.appengine.ext import db
@@ -8,6 +10,20 @@ from google.appengine.api import images
 
 __author__ = 'Matt'
 
+def random_pic_update(template_values):
+    folder_serialized = tools.get_memcached_data('sidebar', models.pics.all().filter('collection =', 'sidebar').run(limit=2000), format='serialized')
+    limit = len(folder_serialized) - 1
+    if limit >= 1:
+        ran_num = random.randint(0, limit)
+        random_pic = db.get(folder_serialized[ran_num])
+    else:
+        random_pic = models.pics.all().filter('collection =', 'sidebar').get()
+    try:
+        template_values['random_picture_key'] = str(random_pic.key())
+        template_values['random_picture_path'] = urllib.quote(random_pic.key().name())
+    except:
+        pass
+    return template_values
 
 class sbar(webapp2.RequestHandler):
     def get(self):

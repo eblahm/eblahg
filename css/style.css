@@ -24,6 +24,15 @@ p {
     width:100%;
 }
 
+
+#ptrig {
+    border-bottom:1px dotted;
+}
+#ptrig:hover {
+    background-color: #ffffe0;
+    cursor: pointer;
+}
+
 .highlight{
     background-color: #ffffe0;
 }
