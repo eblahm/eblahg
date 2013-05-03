@@ -1,16 +1,16 @@
-# Description
+## Description
 
-Eblahg is a dedicated blogging app for the Google App engine platform.  It uses Markdown and the Dropbox Rest Api.  See a live example here
+Eblahg is a dedicated blogging app for the Google App engine platform.  It uses Markdown and the Dropbox Rest Api.  See a live example [here](http://eblahm.appspot.com)
 
 Its is still a work in progress. Feel free to contribute.
 
-# Requirments
+## Requirments
 
 - Google App Engine (GAE) SDK
 - GAE App ID
 - Dropbox Developer account with your own App Token and Secret
 
-# How to Blog...
+## How to Blog...
 
 Once you clone the repository follow these steps
 
@@ -22,24 +22,20 @@ Unfortuntly, I may have other references to my app id in the code... so, If some
 3. Visit /admin/config and fill in your info
 ie your Dropbox App Token/Secret, Blog Name, Name etc
 
-4. In the "/Apps/your_dropbox_app_name/" folder in your dropbox create the following directories
-/posts
-/pics
-/pics/sidebar
+4. In the "/Apps/your_dropbox_app_name/" folder in your dropbox create the following directories:  
+/posts  
+/pics  
+/pics/sidebar  
 
-5. Add content
-Add pictures to the /pics/sidebar directory.  These will show up randomly in the sidebar
-Add blog posts to the /posts folder
+5. Add content, Add pictures to the /pics/sidebar directory.  These will show up randomly in the sidebar. Add blog posts to the /posts folder (obviously, having to create the file structure is not the ideal solution, I need to come up with something better)
 
 6. manually launch sync script using the url: /admin/sync
-You can make this task reoccur as often as you like
+You can make this task reoccur as often as you like using cron.yaml
 
-# Disclaimer
-...there will be bugs
 
-# Credits:
-Twitter Bootstrap
-Mike Knapp - [AppEngine-OAuth-Library](https://github.com/mikeknapp/AppEngine-OAuth-Library)
-Joey Bratton [joeyb-blog](https://github.com/joeyb/joeyb-blog)
-Markdown 2.0.1
-PyRSS2Gen 1.0.0
+## Credits:
+Twitter Bootstrap  
+Mike Knapp - [AppEngine-OAuth-Library](https://github.com/mikeknapp/AppEngine-OAuth-Library)  
+Joey Bratton [joeyb-blog](https://github.com/joeyb/joeyb-blog)  
+Markdown 2.0.1  
+PyRSS2Gen 1.0.0  
