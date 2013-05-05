@@ -123,28 +123,28 @@ class console(webapp2.RequestHandler):
             self.redirect(redirect_url)
 
         if mode == 'verify':
-            # request_token = self.request.get("oauth_token")
-            # request_secret = self.request.get("oauth_token_secret")
-            # data = dropbox.client.get_user_info(request_token, auth_verifier=request_secret)
-            # saved_settings = config.settings.get_by_key_name('SETTINGS', read_policy=db.STRONG_CONSISTENCY)
-            # if saved_settings == None:
-            #     saved_settings = config.settings(key_name='SETTINGS')
-            # saved_settings.dropbox_usr_secret = data['secret']
-            # saved_settings.dropbox_usr_token = data['token']
-            # saved_settings.put()
+            request_token = self.request.get("oauth_token")
+            request_secret = self.request.get("oauth_token_secret")
+            data = dropbox.client.get_user_info(request_token, auth_verifier=request_secret)
+            saved_settings = config.settings.get_by_key_name('SETTINGS', read_policy=db.STRONG_CONSISTENCY)
+            if saved_settings == None:
+                saved_settings = config.settings(key_name='SETTINGS')
+            saved_settings.dropbox_usr_secret = data['secret']
+            saved_settings.dropbox_usr_token = data['token']
+            saved_settings.put()
+            self.redirect('/admin/console')
+           # head = {}
+           # params = {}
 
-            head = {}
-            params = {}
+           # h = {}
+           # h['Content-Type'] = 'text/plain'
+           # h['Content-Transfer-Encoding'] = 'utf-8'
+           # h['Content-disposition'] = 'attachment; filename="foo.md"'
 
-            h = {}
-            h['Content-Type'] = 'text/plain'
-            h['Content-Transfer-Encoding'] = 'utf-8'
-            h['Content-disposition'] = 'attachment; filename="foo.md"'
+           # params = {'file': (h, urllib2.urlopen('https://dl.dropbox.com/u/10718699/Hello%20World.md').read())}
 
-            params = {'file': (h, urllib2.urlopen('https://dl.dropbox.com/u/10718699/Hello%20World.md').read())}
-
-            api_request = dropbox.upload_file('/posts', params, head)
-            self.response.out.write(api_request)
+           # api_request = dropbox.upload_file('/posts', params, head)
+           # self.response.out.write(api_request)
 
 
         if mode == "all":

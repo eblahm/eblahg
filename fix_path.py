@@ -1,7 +1,9 @@
 import os
 import sys
 
+
 app_root = os.path.abspath(os.path.dirname(__file__))
+
 
 def fix():
     # credit:  Nick Johnson of Google

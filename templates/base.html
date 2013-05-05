@@ -18,7 +18,19 @@
 
     <script src="/js/main.js"></script>
     <link href="/css/style.css" rel="stylesheet">
-
+    <script type="text/javascript">
+      var social_html = '<div style="text-align:center">' +
+{% if gplus_url != None %} '<a href="{{ gplus_url }}"><img src="/img/social/gplus.png" alt="gplus"/></a>' + {% endif %}
+{% if youtube_url != None %} '<a href="{{ youtube_url }}"><img src="/img/social/youtube.png" alt="youtube"/></a>' + {% endif %}
+{% if facebook_url != None %} '<a href="{{ facebook_url }}"><img src="/img/social/facebook.png" alt="facebook"/></a>' + {% endif %}
+{% if linkedin_url != None %} '<a href="{{ linkedin_url }}"><img src="/img/social/linkedin.png" alt="linkedin"/></a>' + {% endif %}
+{% if twitter_url != None %}'<a href="{{ twitter_url }}"><img src="/img/social/twitter.png" alt="twitter"/></a>' + {% endif %}
+{% if adn_url != None %}'<a href="{{ adn_url }}"><img src="/img/social/app_net.png" alt="app_net"/></a>' + {% endif %}
+{% if kippt_url != None %}'<a href="{{ kippt_url }}"><img src="/img/social/kippt.png" alt="kippt"/></a>' + {% endif %}
+'<a href="{{ APP_URL }}http://eblahm.appspot.com/rss"><img src="/img/social/rss.png" alt="rss"/></a>' + 
+        '</div>';
+    </script>
+        
   {% endblock %}
 
 </head>

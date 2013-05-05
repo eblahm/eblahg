@@ -17,16 +17,16 @@ handlers:
   upload: favicon\.ico
 
 - url: /admin.*
-  script: _handle_admin.app
+  script: handle_admin.app
   login: admin
   secure: always
 
-- url: /_ah/mail/postme@eblahm\.appspotmail\.com
-  script: _handle_incoming_email.app
+- url: /_ah/mail/postme@.+?\.appspotmail\.com
+  script: handle_email.app
   login: admin
 
 - url: .*
-  script: _handle_main.app
+  script: handle_main.app
 
 inbound_services:
 - mail

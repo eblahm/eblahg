@@ -1,11 +1,21 @@
 import os
-from google.appengine.api import memcache
 from google.appengine.ext import db
+
 
 APP_ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
 APP_URL = 'http://eblahm.appspot.com'
 
 # input data to datastore using the form @ /admin/config
+social_links = {
+    'facebook_url': "http://www.facebook.com/mchalbe",
+    'linkedin_url': "http://www.linkedin.com/pub/matthew-halbe/2b/a37/911/",
+    'youtube_url': "http://www.youtube.com/mchalbe",
+    'twitter_url': "http://twitter.com/_yonant",
+    'adn_url': "https://alpha.app.net/eblah",
+    'kippt_url': "https://kippt.com/mchalbe",
+    'gplus_url': 'https://plus.google.com/116164959143674684741/',
+}
+
 
 class settings(db.Model):
     blog_title = db.StringProperty()

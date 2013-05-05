@@ -7,9 +7,10 @@ import PyRSS2Gen
 import datetime
 from google.appengine.ext import db
 
-__author__ = 'Matt'
 
-SETTINGS = config.settings.get_by_key_name('SETTINGS', read_policy=db.STRONG_CONSISTENCY)
+SETTINGS = config.settings.get_by_key_name('SETTINGS',
+                                           read_policy=db.STRONG_CONSISTENCY)
+
 
 class main(webapp2.RequestHandler):
 
@@ -22,19 +23,21 @@ class main(webapp2.RequestHandler):
         rss_items = []
         for post in posts:
             this_link = SETTINGS.url + "/posts/" + post.slug
-            item = PyRSS2Gen.RSSItem(title=post.title,
-                                     link=this_link,
-                                     description=post.body_html,
-                                     guid="",
-                                     pubDate=post.pub_date
+            item = PyRSS2Gen.RSSItem(
+                title=post.title,
+                link=this_link,
+                description=post.body_html,
+                guid="",
+                pubDate=post.pub_date
             )
             rss_items.append(item)
 
-        rss = PyRSS2Gen.RSS2(title=SETTINGS.blog_title,
-                             link=SETTINGS.url,
-                             description="a blog by Matt Halbe",
-                             lastBuildDate=datetime.datetime.now(),
-                             items=rss_items
+        rss = PyRSS2Gen.RSS2(
+            title=SETTINGS.blog_title,
+            link=SETTINGS.url,
+            description="a blog by Matt Halbe",
+            lastBuildDate=datetime.datetime.now(),
+            items=rss_items
         )
         rss_xml = rss.to_xml()
         self.response.headers['Content-Type'] = 'application/rss+xml'

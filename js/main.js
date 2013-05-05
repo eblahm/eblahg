@@ -1,17 +1,7 @@
 
 $(document).ready(function () {
 
-    var my_html = '<div style="text-align:center">' +
-        '<a href="https://plus.google.com/116164959143674684741/"><img src="/img/social/gplus.png" alt="gplus"/></a>' +
-        '<a href="http://www.youtube.com/mchalbe"><img src="/img/social/youtube.png" alt="youtube"/></a>' +
-        '<a href="http://www.facebook.com/mchalbe"><img src="/img/social/facebook.png" alt="facebook"/></a>' +
-        '<a href="http://www.linkedin.com/pub/matthew-halbe/2b/a37/911/"><img src="/img/social/linkedin.png" alt="linkedin"/></a>' +
-        '<a href="http://twitter.com/_yonant"><img src="/img/social/twitter.png" alt="twitter"/></a>' +
-        '<a href="https://alpha.app.net/eblah"><img src="/img/social/app_net.png" alt="app_net"/></a>' +
-        '<a href="https://kippt.com/mchalbe"><img src="/img/social/kippt.png" alt="kippt"/></a>' +
-        '<a href="http://eblahm.appspot.com/rss"><img src="/img/social/rss.png" alt="rss"/></a>' +
-        '</div>';
-    $('#ptrig').popover({content:my_html, html:true});
+    $('#ptrig').popover({content:social_html, html:true});
 
     $(".ar").click(function () {
         window.location = $(this).data("url");
