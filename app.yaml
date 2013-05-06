@@ -21,6 +21,11 @@ handlers:
   login: admin
   secure: always
 
+- url: /config
+  script: handle_admin.app
+  login: admin
+  secure: always
+
 - url: /_ah/mail/postme@.+?\.appspotmail\.com
   script: handle_email.app
   login: admin

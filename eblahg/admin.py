@@ -16,35 +16,7 @@ import oauth
 import logging
 import config
 from eblahg import models, tools, render
-
-
-
-
-
-class dropbox_api():
-    def __init__(self, callback_url='http://localhost:8080/admin/console/verify'):
-        settings = config.settings.get_by_key_name('SETTINGS', read_policy=db.STRONG_CONSISTENCY)
-        application_key = str(settings.dropbox_app_key)
-        application_secret = str(settings.dropbox_app_secret)
-        self.user_token = str(settings.dropbox_usr_token)
-        self.user_secret = str(settings.dropbox_usr_secret)
-        self.callback_url = callback_url
-        self.client = oauth.DropboxClient(application_key, application_secret, callback_url)
-
-    def request_file(self, path):
-        api_url = 'https://api-content.dropbox.com/1/files/sandbox' + urllib.quote(path)
-        api_request = self.client.make_request(url=api_url, token=self.user_token, secret=self.user_secret)
-        return api_request.content
-
-    def request_meta(self, path):
-        api_url = 'https://api.dropbox.com/1/metadata/sandbox' + urllib.quote(path)
-        api_request = self.client.make_request(url=api_url, token=self.user_token, secret=self.user_secret)
-        return json.loads(api_request.content)
-    def upload_file(self, path, params, head):
-        api_url = 'https://api-content.dropbox.com/1/files/sandbox' + urllib.quote(path)
-        api_request = self.client.make_request(api_url, self.user_token, self.user_secret, additional_params=params, protected=False, method=urlfetch.POST, headers=head)
-        return api_request.content
-
+from StringIO import StringIO
 
 def mb_limit(pic):
     MB = 1000000.0
@@ -71,6 +43,7 @@ def upload_pic(path, rev, collection='main', blog_post_key=None):
     new_picture.put()
     return new_picture
 
+
 def upload(path, this_rev, last_updated=datetime(1947, 11, 11, 11)):
     dropbox = dropbox_api()
     text = dropbox.request_file(path)
@@ -79,15 +52,15 @@ def upload(path, this_rev, last_updated=datetime(1947, 11, 11, 11)):
     for meta_item in header:
         my_regex = r'%s:(.+)\n' % (meta_item)
         re_search = re.search(my_regex, text)
-        if re_search <> None:
+        if re_search != None:
             header[meta_item] = re_search.group(1).strip()
         flush_regex = r'%s:.+\n' % (meta_item)
         text = re.sub(flush_regex, "", text)
-    if header['date'] == None:
+    if header['date'] is None:
         header['date'] = datetime.now()
     else:
         header['date'] = datetime.strptime(header['date'].upper(), '%m-%d-%Y %I:%M%p')
-    if header['title'] == None:
+    if header['title'] is None:
         header['title'] = re.search('posts/(.*?)\..+$', path).group(1)
 
     new_post = models.articles(
@@ -95,15 +68,15 @@ def upload(path, this_rev, last_updated=datetime(1947, 11, 11, 11)):
         title = header['title'].decode('utf-8', 'ignore'),
         pub_date = header['date'],
         body = text.decode('utf-8', 'ignore'),
-        tags = [tag.strip() for tag in header['tags'].split(",") if tag.strip() <> ""],
+        tags = [tag.strip() for tag in header['tags'].split(",") if tag.strip() != ""],
         last_updated = last_updated,
         rev = this_rev,
         )
     new_post.put()
 
-    if header['pics'] <> None:
+    if header['pics'] != None:
         existing_pic = models.pics.all().ancestor(new_post).get()
-        if existing_pic <> None:
+        if existing_pic != None:
             existing_pic.delete()
         for pic_name in header['pics'].split(","):
             simple_name = pic_name.strip().replace('"', "")
@@ -113,121 +86,124 @@ def upload(path, this_rev, last_updated=datetime(1947, 11, 11, 11)):
     return "good"
 
 
+
+class dropbox_api():
+    def __init__(self, callback_url=''):
+        settings = config.settings.get_by_key_name('SETTINGS')
+        application_key = str(settings.dropbox_app_key)
+        application_secret = str(settings.dropbox_app_secret)
+        self.user_token = str(settings.dropbox_usr_token)
+        self.user_secret = str(settings.dropbox_usr_secret)
+        self.callback_url = callback_url
+        self.client = oauth.DropboxClient(application_key,
+                                          application_secret,
+                                          callback_url)
+
+    def request_file(self, path):
+        api_url = 'https://api-content.dropbox.com/1/files/sandbox'
+        api_url += urllib.quote(path)
+        api_request = self.client.make_request(url=api_url,
+                                               token=self.user_token,
+                                               secret=self.user_secret)
+        return api_request.content
+
+    def request_meta(self, path):
+        api_url = 'https://api.dropbox.com/1/metadata/sandbox' + urllib.quote(path)
+        api_request = self.client.make_request(url=api_url, token=self.user_token, secret=self.user_secret)
+        return json.loads(api_request.content)
+
+    def upload_file(self, path, params, head):
+        api_url = 'https://api-content.dropbox.com/1/files/sandbox' + path
+        api_request = self.client.make_request(url=api_url,
+                                               token=self.user_token,
+                                               secret=self.user_secret,
+                                               additional_params=params,
+                                               method=urlfetch.POST,
+                                               headers=head)
+        return api_request.content
+
+
 class console(webapp2.RequestHandler):
-    def get(self, mode="all"):
+    def get(self, mode="login"):
         # Get your app key and secret from the Dropbox developer website
-        dropbox = dropbox_api()
-
-        if mode == "login":
-            redirect_url = dropbox.client.get_authorization_url()
-            self.redirect(redirect_url)
-
-        if mode == 'verify':
-            request_token = self.request.get("oauth_token")
-            request_secret = self.request.get("oauth_token_secret")
-            data = dropbox.client.get_user_info(request_token, auth_verifier=request_secret)
-            saved_settings = config.settings.get_by_key_name('SETTINGS', read_policy=db.STRONG_CONSISTENCY)
-            if saved_settings == None:
-                saved_settings = config.settings(key_name='SETTINGS')
-            saved_settings.dropbox_usr_secret = data['secret']
-            saved_settings.dropbox_usr_token = data['token']
-            saved_settings.put()
-            self.redirect('/admin/console')
-           # head = {}
-           # params = {}
-
-           # h = {}
-           # h['Content-Type'] = 'text/plain'
-           # h['Content-Transfer-Encoding'] = 'utf-8'
-           # h['Content-disposition'] = 'attachment; filename="foo.md"'
-
-           # params = {'file': (h, urllib2.urlopen('https://dl.dropbox.com/u/10718699/Hello%20World.md').read())}
-
-           # api_request = dropbox.upload_file('/posts', params, head)
-           # self.response.out.write(api_request)
-
-
-        if mode == "all":
-            v = {}
-            data = dropbox.request_meta('/posts')
-
-            drafts = []
-            published = []
-            try:
-                folder_contents = data['contents']
-                auth = True
-            except:
-                auth = False
-
-            if auth == False:
-                incoming_url = self.request.url
-                re_url = '/admin/console/login?callback=' + urllib.quote(incoming_url) + urllib.quote("?initialize=yes")
-                self.redirect(re_url)
-            else:
-                for a in folder_contents:
-                    rec = models.articles.get_by_key_name(str(a['path']))
-
-                    class article:
-                        title = a['path'].replace('/posts/', "").replace('.md', "")
-                        last_updated = datetime.strptime(a['modified'], "%a, %d %b %Y %H:%M:%S +0000")
-                        tags = ""
-                        path = urllib.quote(a['path'])
-                        rev = a['rev']
-                        if rec <> None:
-                            pub_date = rec.pub_date
-                        if rec == None:
-                            status = 'Draft'
-                        elif rec.rev == rev:
-                            status = 'Published'
-                        else:
-                            status = 'Unpublished Changes'
-
-                    if article.status in ['Draft', 'Unpublished Changes']:
-                        drafts.append(article)
-                    else:
-                        published.append(article)
-
-                v['articles'] = sorted(drafts, key=lambda article: article.last_updated, reverse=True) + sorted(published, key=lambda article: article.pub_date, reverse=True)
-
-                render.page(self, '/templates/admin/console.html', values=v)
-
-
-
-class edit(webapp2.RequestHandler):
-    def get(self, mode=""):
-        self.response.out.write('editor')
+        if 'localhost' in self.request.url:
+            callback = 'http://localhost:8080'
+        else:
+            callback = config.APP_URL
+        callback += '/admin/verify'
+        try:
+           # dropbox = dropbox_api(callback)
+            handshake = True
+        except:
+            handshake = False
+        if handshake:
+            if mode == 'login':
+                redirect_url = dropbox.client.get_authorization_url()
+                self.redirect(redirect_url)
+            if mode == 'verify':
+                request_token = self.request.get("oauth_token")
+                request_secret = self.request.get("oauth_token_secret")
+                data = dropbox.client.get_user_info(request_token,
+                                                    auth_verifier=request_secret)
+                saved_settings = config.settings.get_by_key_name('SETTINGS')
+                if saved_settings is None:
+                    saved_settings = config.settings(key_name='SETTINGS')
+                saved_settings.dropbox_usr_secret = data['secret']
+                saved_settings.dropbox_usr_token = data['token']
+                saved_settings.put()
+                self.response.out.write('good')
+            if mode == 'upload_hello_world':
+                h = {}
+                hworld = 'https://dl.dropbox.com/u/10718699/Hello%20World.md'
+                dbox_file = urllib2.urlopen(hworld).read()
+                params = {'file': 'foo bar file\r\n this is a real file thouh'}
+                h['Content-Type'] = 'text/plain'
+                h['Content-Length'] = str(len(dbox_file))
+                url_path = '/posts/hello_world.md'
+                dropbox = dropbox_api()
+               # api_request = dropbox.upload_file(url_path, params, h)
+                api_request =  dropbox.request_meta('/posts')
+                self.response.out.write(api_request)
+        else:
+            self.redirect('/config')
 
 
 class config_handler(webapp2.RequestHandler):
     def get(self):
         v = {}
         render.page(self, '/templates/admin/config.html', v)
+
     def post(self):
         settings_dict = self.request.POST
-        saved_settings = config.settings.get_by_key_name('SETTINGS', read_policy=db.STRONG_CONSISTENCY)
-        if saved_settings == None:
+        saved_settings = config.settings.get_by_key_name('SETTINGS')
+        if saved_settings is None:
             saved_settings = config.settings(key_name='SETTINGS')
         for s in settings_dict:
             setattr(saved_settings, s, str(settings_dict[s]))
         saved_settings.put()
-        self.response.out.write('saved!')
-
+        self.redirect('/admin')
 
 class sync(webapp2.RequestHandler):
     def get(self):
         dropbox = dropbox_api()
 
         # Two folders from dropbox will be syced with datastore
-        # this dict object enables abstraction for the syching mechanism later on
+        # this dict object enables abstraction for the syching mechanism
         sync_folders = {}
-        sync_folders['articles'] = {'path':'/posts',
-                                      'content_type':'text',
-                                      'query': models.articles.all(),
-                                      'model': models.articles}
-        sync_folders['sidebar'] = {'path':'/pics/sidebar',
-                                        'content_type':'pic',
-                                        'query': models.pics.all().filter('collection =', 'sidebar').run(limit=2000),
-                                        'model': models.pics}
+        sync_folders['articles'] = {
+            'path': '/posts',
+            'content_type': 'text',
+            'query': models.articles.all(),
+            'model': models.articles
+        }
+        sbar = models.pics.all()
+        sbar.filter('collection =', 'sidebar').run(limit=3000)
+        sync_folders['sidebar'] = {
+            'path': '/pics/sidebar',
+            'content_type': 'pic',
+            'query': sbar,
+            'model': models.pics
+        }
         master_count = 0
         master_delete_count = 0
         for sync_folder in sync_folders:
@@ -249,7 +225,7 @@ class sync(webapp2.RequestHandler):
                 # compare current drobox for each item versus the currently in datastore
                 # "rev" is the version control number, new 'rev' == new edit
                 # conflict indicates new edits
-                if dstore_rev <> dropbox_rev:
+                if dstore_rev != dropbox_rev:
                     # queue item to be reuploaded to datastore
                     # the reupload process will overwrite obsolete data
                     taskqueue.add(url='/admin/sync', params={'path': str(a['path']), 'rev':a['rev'], 'modified':a['modified'], 'content_type':data['content_type'] })
@@ -257,7 +233,7 @@ class sync(webapp2.RequestHandler):
 
                 # remove checked items from memcache
                 # once loop is complete only deleted or renamed files will remain
-                if dstore_rev <> None:
+                if dstore_rev != None:
                     version_control_object.pop(a['path'])
 
             # delete all items in datastore that no longer appear in dropbox
@@ -287,7 +263,7 @@ class sync(webapp2.RequestHandler):
         rev = self.request.get('rev')
         if content_type == 'text':
             modified = datetime.strptime(self.request.get('modified'), "%a, %d %b %Y %H:%M:%S +0000")
-            if path <> "":
+            if path != "":
                 upload(path, rev, modified)
         elif content_type == 'pic':
             upload_pic(path, rev, 'sidebar')
