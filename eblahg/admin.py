@@ -112,15 +112,28 @@ class dropbox_api():
         api_request = self.client.make_request(url=api_url, token=self.user_token, secret=self.user_secret)
         return json.loads(api_request.content)
 
-    def upload_file(self, path, params, head):
-        api_url = 'https://api-content.dropbox.com/1/files/sandbox' + path
+    def create_folder(self, params, head={}):
+        api_url = 'https://api.dropbox.com/1/fileops/create_folder'
         api_request = self.client.make_request(url=api_url,
                                                token=self.user_token,
                                                secret=self.user_secret,
+                                               protected=True,
                                                additional_params=params,
                                                method=urlfetch.POST,
                                                headers=head)
         return api_request.content
+
+    def upload_file(self, path, head={}, file_contents="", params={}):
+        api_url = 'https://api-content.dropbox.com/1/files_put/sandbox' + path
+        api_request = self.client.make_async_request(url=api_url,
+                                               token=self.user_token,
+                                               secret=self.user_secret,
+                                               protected=True,
+                                               additional_params=params,
+                                               method=urlfetch.PUT,
+                                               headers=head,
+                                               body=file_contents)
+        return api_request.get_result().content
 
 
 class console(webapp2.RequestHandler):
@@ -132,7 +145,7 @@ class console(webapp2.RequestHandler):
             callback = config.APP_URL
         callback += '/admin/verify'
         try:
-           # dropbox = dropbox_api(callback)
+            dropbox = dropbox_api(callback)
             handshake = True
         except:
             handshake = False
@@ -153,16 +166,16 @@ class console(webapp2.RequestHandler):
                 saved_settings.put()
                 self.response.out.write('good')
             if mode == 'upload_hello_world':
+                params = {'root': 'sandbox', 'path': '/published'}
+                api_request = dropbox.create_folder(params)
                 h = {}
                 hworld = 'https://dl.dropbox.com/u/10718699/Hello%20World.md'
-                dbox_file = urllib2.urlopen(hworld).read()
-                params = {'file': 'foo bar file\r\n this is a real file thouh'}
+                hworld = urllib.urlopen(hworld)
+                file_contents = hworld.read()
                 h['Content-Type'] = 'text/plain'
-                h['Content-Length'] = str(len(dbox_file))
-                url_path = '/posts/hello_world.md'
-                dropbox = dropbox_api()
-               # api_request = dropbox.upload_file(url_path, params, h)
-                api_request =  dropbox.request_meta('/posts')
+                h['Content-Length'] = str(len(file_contents))
+                url_path = '/published/hello_world.md'
+                api_request = dropbox.upload_file(url_path, h, file_contents)
                 self.response.out.write(api_request)
         else:
             self.redirect('/config')

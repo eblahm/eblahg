@@ -160,8 +160,13 @@ class OAuthClient():
                            for k in sorted(params)])
 
     # Join the entire message together per the OAuth specification.
-    message = "&".join(["GET" if method == urlfetch.GET else "POST",
-                       encode(url), encode(params_str)])
+    if method == urlfetch.GET:
+        meth = "GET"
+    elif method == urlfetch.PUT:
+        meth = "PUT"
+    else:
+        meth = "POST"
+    message = "&".join([meth, encode(url), encode(params_str)])
 
     # Create a HMAC-SHA1 signature of the message.
     key = "%s&%s" % (self.consumer_secret, secret) # Note compulsory "&".
@@ -173,7 +178,8 @@ class OAuthClient():
     return urlencode(params)
 
   def make_async_request(self, url, token="", secret="", additional_params=None,
-                         protected=False, method=urlfetch.GET, headers={}):
+                         protected=False, method=urlfetch.GET, headers={},
+                         body=None):
     """Make Request.
 
     Make an authenticated request to any OAuth protected resource.
@@ -189,6 +195,10 @@ class OAuthClient():
     if method == urlfetch.GET:
       url = "%s?%s" % (url, payload)
       payload = None
+    if method == urlfetch.PUT:
+      url = "%s?%s" % (url, payload)
+      payload = body
+
 
     if protected:
       headers["Authorization"] = "OAuth"

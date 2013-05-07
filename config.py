@@ -5,7 +5,6 @@ from google.appengine.ext import db
 APP_ROOT_DIR = os.path.abspath(os.path.dirname(__file__))
 APP_URL = 'http://eblahm.appspot.com'
 
-# input data to datastore using the form @ /admin/config
 social_links = {
     'facebook_url': "http://www.facebook.com/mchalbe",
     'linkedin_url': "http://www.linkedin.com/pub/matthew-halbe/2b/a37/911/",
@@ -17,6 +16,7 @@ social_links = {
 }
 
 
+# input data to datastore using the form @ /admin/config
 class settings(db.Model):
     blog_title = db.StringProperty()
     author = db.StringProperty()
