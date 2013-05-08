@@ -19,9 +19,9 @@ Once you clone the repository follow these steps
 
 3. Visit /config and fill in the appropriate info your info
 
-4. Click the "INITIALIZE DROPBOX API CLIENT" button
+4. Click the "INITIALIZE DROPBOX API CLIENT" button.  This will create the file structure within the APPS folder of your Drobox
 
-5. add content to the "publish", "pics", and "sidebar_pics" folders
+5. add content to the "published", "pics", and "sidebar_pics" folders
 
 6. manually launch sync script using the url: /admin/sync
 You can make this task reoccur as often as you like using cron.yaml
