@@ -17,9 +17,9 @@ Once you clone the repository follow these steps
 
 2. Deploy the code to App Engine using the SDK
 
-3. Visit /config and fill in the appropriate info for your info
+3. Visit /config and fill in the appropriate info for your blog
 
-4. Click the "INITIALIZE DROPBOX API CLIENT" button.  This will create the file structure within the Apps folder of your Drobox
+4. Click the "INITIALIZE DROPBOX API CLIENT" button.  This will create the file structure within the Apps folder of your Dropbox
 
 5. add content to the "published", "pics", and "sidebar_pics" folders
 
