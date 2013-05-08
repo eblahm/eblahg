@@ -1,6 +1,6 @@
 ## Description
 
-Eblahg is a dedicated blogging app for the Google App engine platform.  It uses Markdown and the Dropbox Rest Api.  See a live example [here](http://eblahm.appspot.com)
+Eblahg is a dedicated blogging app for the Google App engine platform.  It uses Markdown and the Dropbox REST Api.  See a live example [here](http://eblahm.appspot.com)
 
 Its is still a work in progress. Feel free to contribute.
 
@@ -13,13 +13,13 @@ Its is still a work in progress. Feel free to contribute.
 ## How to Blog...
 Once you clone the repository follow these steps
 
-1. Edit App.yaml and config.py to reflect your app's info
+1. Edit app.yaml and config.py to reflect your app's info
 
 2. Deploy the code to App Engine using the SDK
 
-3. Visit /config and fill in the appropriate info your info
+3. Visit /config and fill in the appropriate info for your info
 
-4. Click the "INITIALIZE DROPBOX API CLIENT" button.  This will create the file structure within the APPS folder of your Drobox
+4. Click the "INITIALIZE DROPBOX API CLIENT" button.  This will create the file structure within the Apps folder of your Drobox
 
 5. add content to the "published", "pics", and "sidebar_pics" folders
 
