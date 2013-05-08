@@ -1,7 +1,6 @@
 import fix_path
 fix_path.fix()
 import config
-import urllib2
 import urllib
 import json
 import re
@@ -14,9 +13,8 @@ from google.appengine.api import memcache
 from google.appengine.api import urlfetch
 import oauth
 import logging
-import config
 from eblahg import models, tools, render
-from StringIO import StringIO
+
 
 def mb_limit(pic):
     MB = 1000000.0
@@ -61,16 +59,17 @@ def upload(path, this_rev, last_updated=datetime(1947, 11, 11, 11)):
     else:
         header['date'] = datetime.strptime(header['date'].upper(), '%m-%d-%Y %I:%M%p')
     if header['title'] is None:
-        header['title'] = re.search('posts/(.*?)\..+$', path).group(1)
+        retitle = re.search('(.*?)\..+$', path).group(1)
+        header['title'] = retitle.replace('/published/', '')
 
     new_post = models.articles(
-        key_name = str(path),
-        title = header['title'].decode('utf-8', 'ignore'),
-        pub_date = header['date'],
-        body = text.decode('utf-8', 'ignore'),
-        tags = [tag.strip() for tag in header['tags'].split(",") if tag.strip() != ""],
-        last_updated = last_updated,
-        rev = this_rev,
+        key_name=str(path),
+        title=header['title'].decode('utf-8', 'ignore'),
+        pub_date=header['date'],
+        body=text.decode('utf-8', 'ignore'),
+        tags=[tag.strip() for tag in header['tags'].split(",") if tag.strip() != ""],
+        last_updated=last_updated,
+        rev=this_rev,
         )
     new_post.put()
 
@@ -139,21 +138,23 @@ class dropbox_api():
 class console(webapp2.RequestHandler):
     def get(self, mode="login"):
         # Get your app key and secret from the Dropbox developer website
-        if 'localhost' in self.request.url:
-            callback = 'http://localhost:8080'
+        if 'localhost' in self.request.url or '127.0.0' in self.request.url:
+            callback = self.request.url
+            callback = callback.replace('/admin', '')
+            callback = callback.replace('/login', '')
         else:
             callback = config.APP_URL
-        callback += '/admin/verify'
+        callback += '/admin/initialize'
         try:
             dropbox = dropbox_api(callback)
-            handshake = True
+            minimum_dbox_info = True
         except:
-            handshake = False
-        if handshake:
+            minimum_dbox_info = False
+        if minimum_dbox_info:
             if mode == 'login':
                 redirect_url = dropbox.client.get_authorization_url()
                 self.redirect(redirect_url)
-            if mode == 'verify':
+            if mode == 'initialize':
                 request_token = self.request.get("oauth_token")
                 request_secret = self.request.get("oauth_token_secret")
                 data = dropbox.client.get_user_info(request_token,
@@ -164,10 +165,14 @@ class console(webapp2.RequestHandler):
                 saved_settings.dropbox_usr_secret = data['secret']
                 saved_settings.dropbox_usr_token = data['token']
                 saved_settings.put()
-                self.response.out.write('good')
-            if mode == 'upload_hello_world':
-                params = {'root': 'sandbox', 'path': '/published'}
-                api_request = dropbox.create_folder(params)
+                # restart dropbox client with access token and secret
+                dropbox = dropbox_api()
+                # create the default file structure
+                paths = ['/published', '/pics', 'sidebar_pics']
+                for p in paths:
+                    params = {'root': 'sandbox', 'path': p}
+                    api_request = dropbox.create_folder(params)
+                # upload hello world post
                 h = {}
                 hworld = 'https://dl.dropbox.com/u/10718699/Hello%20World.md'
                 hworld = urllib.urlopen(hworld)
@@ -176,7 +181,7 @@ class console(webapp2.RequestHandler):
                 h['Content-Length'] = str(len(file_contents))
                 url_path = '/published/hello_world.md'
                 api_request = dropbox.upload_file(url_path, h, file_contents)
-                self.response.out.write(api_request)
+                self.redirect('/config')
         else:
             self.redirect('/config')
 
@@ -184,6 +189,21 @@ class console(webapp2.RequestHandler):
 class config_handler(webapp2.RequestHandler):
     def get(self):
         v = {}
+        if self.request.get('m') == '1':
+            alert_message = 'The "published", "pics" and "sidebar" folders'
+            alert_message += 'have been added to your eblahg folder.  Also, the'
+            alert_message += 'Dropbox api client has been intialized.'
+            v['alert_type'] = 'success'
+            v['alert_message'] = alert_message
+        try:
+            dropbox = dropbox_api()
+            saved_settings = config.settings.get_by_key_name('SETTINGS')
+            if saved_settings.dropbox_usr_token != None:
+                v['dropbox_status'] = 'FULLY FUNCTIONAL'
+            else:
+                v['dropbox_status'] = 'NOT INITIALIZED'
+        except:
+            v['dropbox_status'] = 'MISSING OR INCORRECT APP TOKEN SECRET PAIR'
         render.page(self, '/templates/admin/config.html', v)
 
     def post(self):
@@ -196,6 +216,7 @@ class config_handler(webapp2.RequestHandler):
         saved_settings.put()
         self.redirect('/admin')
 
+
 class sync(webapp2.RequestHandler):
     def get(self):
         dropbox = dropbox_api()
@@ -204,7 +225,7 @@ class sync(webapp2.RequestHandler):
         # this dict object enables abstraction for the syching mechanism
         sync_folders = {}
         sync_folders['articles'] = {
-            'path': '/posts',
+            'path': '/published',
             'content_type': 'text',
             'query': models.articles.all(),
             'model': models.articles
@@ -212,7 +233,7 @@ class sync(webapp2.RequestHandler):
         sbar = models.pics.all()
         sbar.filter('collection =', 'sidebar').run(limit=3000)
         sync_folders['sidebar'] = {
-            'path': '/pics/sidebar',
+            'path': '/sidebar_pics',
             'content_type': 'pic',
             'query': sbar,
             'model': models.pics
@@ -229,7 +250,8 @@ class sync(webapp2.RequestHandler):
             # call dropbox api for info regarding folder contents
             folder_meta = dropbox.request_meta(data['path'])
             upload_count = 0
-            for a in folder_meta['contents']:
+            folder_contents = folder_meta.get('contents',[])
+            for a in folder_contents:
                 try:
                     dstore_rev = version_control_object[str(a['path'])]
                 except:
@@ -241,7 +263,13 @@ class sync(webapp2.RequestHandler):
                 if dstore_rev != dropbox_rev:
                     # queue item to be reuploaded to datastore
                     # the reupload process will overwrite obsolete data
-                    taskqueue.add(url='/admin/sync', params={'path': str(a['path']), 'rev':a['rev'], 'modified':a['modified'], 'content_type':data['content_type'] })
+                    taskqueue.add(url='/admin/sync',
+                        params={
+                            'path': str(a['path']),
+                            'rev': a['rev'],
+                            'modified': a['modified'],
+                            'content_type': data['content_type']
+                        })
                     upload_count += 1
 
                 # remove checked items from memcache

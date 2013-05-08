@@ -6,28 +6,22 @@ Its is still a work in progress. Feel free to contribute.
 
 ## Requirments
 
-- Google App Engine (GAE) SDK
-- GAE App ID
-- Dropbox Developer account with your own App Token and Secret
+- [Google App Engine (GAE) SDK](https://developers.google.com/appengine/downloads)
+- [GAE App ID](https://appengine.google.com/)
+- Dropbox Developer account with [your own App Token and Secret](https://www.dropbox.com/developers/apps)
 
 ## How to Blog...
-
 Once you clone the repository follow these steps
 
-1. Edit App.yaml to reflect your app id
-Unfortuntly, I may have other references to my app id in the code... so, If something breaks, I'm sorry.  I'm working on it.
+1. Edit App.yaml and config.py to reflect your app's info
 
-2. Deploy to App Engine
+2. Deploy the code to App Engine using the SDK
 
-3. Visit /admin/config and fill in your info
-ie your Dropbox App Token/Secret, Blog Name, Name etc
+3. Visit /config and fill in the appropriate info your info
 
-4. In the "/Apps/your_dropbox_app_name/" folder in your dropbox create the following directories:  
-/posts  
-/pics  
-/pics/sidebar  
+4. Click the "INITIALIZE DROPBOX API CLIENT" button
 
-5. Add content, Add pictures to the /pics/sidebar directory.  These will show up randomly in the sidebar. Add blog posts to the /posts folder (obviously, having to create the file structure is not the ideal solution, I need to come up with something better)
+5. add content to the "publish", "pics", and "sidebar_pics" folders
 
 6. manually launch sync script using the url: /admin/sync
 You can make this task reoccur as often as you like using cron.yaml

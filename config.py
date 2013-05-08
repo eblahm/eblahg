@@ -27,3 +27,4 @@ class settings(db.Model):
     dropbox_app_secret = db.StringProperty()
     dropbox_usr_token = db.StringProperty()
     dropbox_usr_secret = db.StringProperty()
+    randomized_sidebar = db.StringProperty(default='no',choices=['yes','no'])
