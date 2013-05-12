@@ -13,7 +13,7 @@ from google.appengine.api import memcache
 from google.appengine.api import urlfetch
 import oauth
 import logging
-from eblahg import models, tools, render
+from eblahg import models, render
 
 
 def mb_limit(pic):
@@ -195,6 +195,10 @@ class config_handler(webapp2.RequestHandler):
             alert_message += 'Dropbox api client has been intialized.'
             v['alert_type'] = 'success'
             v['alert_message'] = alert_message
+        if self.request.get('m') == '2':
+            alert_message = 'Settings Saved!'
+            v['alert_type'] = 'success'
+            v['alert_message'] = alert_message
         try:
             dropbox = dropbox_api()
             saved_settings = config.settings.get_by_key_name('SETTINGS')
@@ -214,7 +218,7 @@ class config_handler(webapp2.RequestHandler):
         for s in settings_dict:
             setattr(saved_settings, s, str(settings_dict[s]))
         saved_settings.put()
-        self.redirect('/admin')
+        self.redirect('/config?m=2')
 
 
 class sync(webapp2.RequestHandler):
@@ -242,23 +246,19 @@ class sync(webapp2.RequestHandler):
         master_delete_count = 0
         for sync_folder in sync_folders:
             data = sync_folders[sync_folder]
-
-            # query datastore
-            # use memcached data by default to minimize datastore query calls
-            version_control_object = tools.get_memcached_data(sync_folder, data['query'])
+            db_mirror = {}
+            for i in data['query']:
+                db_mirror[str(i.key().name())] = i.rev
 
             # call dropbox api for info regarding folder contents
             folder_meta = dropbox.request_meta(data['path'])
             upload_count = 0
             folder_contents = folder_meta.get('contents',[])
             for a in folder_contents:
-                try:
-                    dstore_rev = version_control_object[str(a['path'])]
-                except:
-                    dstore_rev = None
+                dstore_rev = db_mirror.get(a['path'], None)
                 dropbox_rev = a['rev']
                 # compare current drobox for each item versus the currently in datastore
-                # "rev" is the version control number, new 'rev' == new edit
+                # "rev" is the version control number, new 'rev' = new edit
                 # conflict indicates new edits
                 if dstore_rev != dropbox_rev:
                     # queue item to be reuploaded to datastore
@@ -275,11 +275,11 @@ class sync(webapp2.RequestHandler):
                 # remove checked items from memcache
                 # once loop is complete only deleted or renamed files will remain
                 if dstore_rev != None:
-                    version_control_object.pop(a['path'])
+                    db_mirror.pop(a['path'])
 
             # delete all items in datastore that no longer appear in dropbox
             deleted_count = 0
-            for dead_file in version_control_object:
+            for dead_file in db_mirror:
                 dead_db_record = data['model'].get_by_key_name(dead_file)
                 dead_db_record.delete()
                 deleted_count += 1

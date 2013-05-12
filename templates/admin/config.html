@@ -8,7 +8,7 @@
 </div>
 {% endif %}
 <h1>Settings</h1>
-<form class="navbar-form" action='/admin/config' method="POST">
+<form class="navbar-form" action='/config' method="POST">
     <strong>Blog Title: </strong><input name="blog_title" type="text"{% if settings.blog_title %} value="{{ settings.blog_title }}"{% endif %}><br>
     <strong>author: </strong><input name="author" type="text"{% if settings.author %} value="{{ settings.author }}"{% endif %}><br>
     <strong>email: </strong><input name="email" type="text"{% if settings.email %} value="{{ settings.email }}"{% endif %}><br>

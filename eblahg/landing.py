@@ -2,7 +2,7 @@ import webapp2
 import models
 import render
 import pictures
-__author__ = 'Matt'
+
 
 class main(webapp2.RequestHandler):
     def get(self):

@@ -7,11 +7,17 @@ import render
 import urllib
 from google.appengine.ext import db
 from google.appengine.api import images
-
-__author__ = 'Matt'
+from google.appengine.api import memcache
 
 def random_pic_update(template_values):
-    folder_serialized = tools.get_memcached_data('sidebar', models.pics.all().filter('collection =', 'sidebar').run(limit=2000), format='serialized')
+    folder_serialized = memcache.get('sidebar_folder_serialized')
+    if folder_serialized == None:
+        query = models.pics.all().filter('collection =', 'sidebar').run(limit=2000)
+        fs = []
+        for p in query:
+            fs.append(str(p.key()))
+        memcache.set('sidebar_folder_serialized', fs)
+        folder_serialized = memcache.get('sidebar_folder_serialized')
     limit = len(folder_serialized) - 1
     if limit >= 1:
         ran_num = random.randint(0, limit)
@@ -24,6 +30,8 @@ def random_pic_update(template_values):
     except:
         pass
     return template_values
+
+
 
 class sbar(webapp2.RequestHandler):
     def get(self):
@@ -52,6 +60,7 @@ class sbar(webapp2.RequestHandler):
 
         self.response.out.write(final_pic)
 
+
 class single(webapp2.RequestHandler):
     def get(self):
         size = self.request.get('size')
@@ -64,6 +73,7 @@ class single(webapp2.RequestHandler):
             img = rec.pic
         self.response.headers['Content-Type'] = 'image/jpeg'
         self.response.out.write(img)
+
 
 class all(webapp2.RequestHandler):
     def get(self, pic=all):
