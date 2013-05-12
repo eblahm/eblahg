@@ -76,10 +76,10 @@ class single(webapp2.RequestHandler):
 
 
 class all(webapp2.RequestHandler):
-    def get(self, pic=all):
+    def get(self, pic='all'):
         v = {}
-        if pic == all:
-            # q = models.pics.all().fetch(100)
+        if pic == 'all':
+            q = models.pics.all().fetch(100)
             v['range'] = range(1, 100)
             html_stuff = '<div style="text-align:center">'
             x = 0
@@ -95,8 +95,8 @@ class all(webapp2.RequestHandler):
             v['title'] = 'All Pics'
 
         else:
-            pic = '/pics/' + pic
-            v['pic'] = models.pics.get_by_key_name(pic)
+            pic_key_name = "/" + pic
+            v['pic'] = models.pics.get_by_key_name(pic_key_name)
             v['title'] = v['pic'].title
             v['title_quoted'] = urllib.quote(v['pic'].title)
             v['key_name_quoted'] = urllib.quote(v['pic'].key().name())

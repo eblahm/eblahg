@@ -30,6 +30,6 @@ $(document).ready(function () {
     else {
         pic_url = '/pic/sbar?k=' + random_picture_key + '&h=' + sheight + '&w=' + swidth
     }
-    $("#sidebar_inner").html('<a href="' + random_picture_path + '"><img id="unique_pic" src="' + pic_url + '"></a>');
+    $("#sidebar_inner").html('<a href="/pics' + random_picture_path + '"><img id="unique_pic" src="' + pic_url + '"></a>');
     if (desktop_or_tablet) {if (window.screen.width > 768) {$("#unique_pic").css("width", swidth)}};
 });

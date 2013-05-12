@@ -34,7 +34,7 @@ def upload_pic(path, rev, collection='main', blog_post_key=None):
     this_pic = mb_limit(this_pic)
     new_picture = models.pics(
         key_name=path,
-        title = path.replace('/pics/',"").replace('.jpg', "").replace('sidebar_pics/',""),
+        title = path.replace('/pics/',"").replace('.jpg', "").replace('/sidebar_pics/',""),
         pic = db.Blob(this_pic),
         parent = blog_post_key,
         collection = collection)
