@@ -14,6 +14,7 @@ from google.appengine.api import urlfetch
 import oauth
 import logging
 from eblahg import models, render
+from google.appengine.api import memcache
 
 
 def mb_limit(pic):
@@ -33,7 +34,7 @@ def upload_pic(path, rev, collection='main', blog_post_key=None):
     this_pic = mb_limit(this_pic)
     new_picture = models.pics(
         key_name=path,
-        title = path.replace('/pics/',"").replace('.jpg', "").replace('sidebar/',""),
+        title = path.replace('/pics/',"").replace('.jpg', "").replace('sidebar_pics/',""),
         pic = db.Blob(this_pic),
         parent = blog_post_key,
         collection = collection)
@@ -181,7 +182,7 @@ class console(webapp2.RequestHandler):
                 h['Content-Length'] = str(len(file_contents))
                 url_path = '/published/hello_world.md'
                 api_request = dropbox.upload_file(url_path, h, file_contents)
-                self.redirect('/config')
+                self.redirect('/config?m=1')
         else:
             self.redirect('/config')
 
@@ -223,6 +224,7 @@ class config_handler(webapp2.RequestHandler):
 
 class sync(webapp2.RequestHandler):
     def get(self):
+        memcache.flush_all()
         dropbox = dropbox_api()
 
         # Two folders from dropbox will be syced with datastore

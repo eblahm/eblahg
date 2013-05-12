@@ -32,6 +32,7 @@ handlers:
 
 - url: .*
   script: handle_main.app
+  secure: always
 
 inbound_services:
 - mail

@@ -1,7 +1,7 @@
 {% extends "/templates/base.html" %}
 
 {%  block main_container %}
-{% if alert_message != None %}
+{% if alert_message %}
 <div class="alert alert-{{ alert_type }}">
     <button type="button" class="close" data-dismiss="alert">&times;</button>
     <h4>{{ alert_type }}</h4>{{ alert_message }}
