@@ -15,16 +15,10 @@ social_links = {
     'gplus_url': 'https://plus.google.com/116164959143674684741/',
 }
 
-
-# input data to datastore using the form @ /admin/config
-class settings(db.Model):
-    blog_title = db.StringProperty()
-    author = db.StringProperty()
-    email = db.StringProperty()
-    url = db.StringProperty()
-    google_analytics = db.StringProperty()
-    dropbox_app_key = db.StringProperty()
-    dropbox_app_secret = db.StringProperty()
-    dropbox_usr_token = db.StringProperty()
-    dropbox_usr_secret = db.StringProperty()
-    randomized_sidebar = db.StringProperty(default='no',choices=['yes','no'])
+settings = {
+    'blog_title': "Eblahg",
+    'author': 'Matt Halbe',
+    'email': 'matthew.c.halbe@gmail.com',
+    'google_analytics': 'XXX',
+    'randomized_sidebar': True,
+}

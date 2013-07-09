@@ -16,26 +16,9 @@ handlers:
   static_files: favicon.ico
   upload: favicon\.ico
 
-- url: /admin.*
-  script: handle_admin.app
-  login: admin
-  secure: always
-
-- url: /config
-  script: handle_admin.app
-  login: admin
-  secure: always
-
-- url: /_ah/mail/postme@.+?\.appspotmail\.com
-  script: handle_email.app
-  login: admin
-
 - url: .*
-  script: handle_main.app
+  script: urls.app
   secure: always
-
-inbound_services:
-- mail
 
 libraries:
 - name: webapp2

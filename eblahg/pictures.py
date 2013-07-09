@@ -1,7 +1,5 @@
 import webapp2
 import models
-import logging
-import tools
 import random
 import render
 import urllib
