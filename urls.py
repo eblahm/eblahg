@@ -1,5 +1,5 @@
 import webapp2
-from eblahg import landing, rss, search, pictures, article
+from eblahg import landing, rss, search, pictures, article, render, sync
 
 
 app = webapp2.WSGIApplication([
@@ -10,6 +10,11 @@ app = webapp2.WSGIApplication([
         ('/search', search.term),
         ('/pic/sbar', pictures.sbar),
         ('/pic', pictures.single),
-        ('/pics/(.+)', pictures.all),
-        ('/(.+)', article.main),
+        ('/(.+)', render.not_found),
+    ], debug=True)
+
+sync_agent = webapp2.WSGIApplication([
+        ('/sync/(.+)', sync.handshake),
+        ('/sync', sync.main),
+        ('/(.+)', render.not_found),
     ], debug=True)

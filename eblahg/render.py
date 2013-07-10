@@ -8,8 +8,10 @@ jinja_env = jinja2.Environment(
 
 
 def page(handler, template_file, values={}):
-    values.update({'settings': })
+
+    values.update(config.settings)
     values.update(config.social_links)
+
     template = jinja_env.get_template(template_file)
     handler.response.out.write(template.render(values))
 

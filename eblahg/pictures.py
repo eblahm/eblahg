@@ -72,31 +72,3 @@ class single(webapp2.RequestHandler):
         self.response.headers['Content-Type'] = 'image/jpeg'
         self.response.out.write(img)
 
-
-class all(webapp2.RequestHandler):
-    def get(self, pic='all'):
-        v = {}
-        if pic == 'all':
-            q = models.pics.all().fetch(100)
-            v['range'] = range(1, 100)
-            html_stuff = '<div style="text-align:center">'
-            x = 0
-            for i in q:
-                html_stuff += '<span class="pic_tmb" style="padding:10px"><img src="/pic?id=%i&size=thumbnail"></span>' % (i)
-                x += 1
-                if x >= 9:
-                    html_stuff += '<br>'
-                    x = 0
-
-            html_stuff += '</div>'
-            v['all_pics'] = html_stuff
-            v['title'] = 'All Pics'
-
-        else:
-            pic_key_name = "/" + pic
-            v['pic'] = models.pics.get_by_key_name(pic_key_name)
-            v['title'] = v['pic'].title
-            v['title_quoted'] = urllib.quote(v['pic'].title)
-            v['key_name_quoted'] = urllib.quote(v['pic'].key().name())
-        render.page(self, '/templates/main/pictures.html', v)
-
