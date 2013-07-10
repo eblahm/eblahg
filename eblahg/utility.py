@@ -13,23 +13,19 @@ from google.appengine.api import memcache
 from google.appengine.api import urlfetch
 import oauth
 
-def mb_limit(pic):
-    MB = 1000000.0
-    if len(pic) > MB:
-        degrade = int((MB/len(pic)) * 100)
-        this_pic = images.Image(pic)
-        this_pic.im_feeling_lucky()
-        return this_pic.execute_transforms(output_encoding=images.JPEG, quality=degrade)
-    else:
-        return pic
+class dropox_info(db.Model):
+    app_key = db.StringProperty()
+    app_secret = db.StringProperty()
+    usr_token = db.StringProperty()
+    usr_secret = db.StringProperty()
 
 class dropbox_api():
     def __init__(self, callback_url=''):
-        settings = config.settings.get_by_key_name('SETTINGS')
-        application_key = str(settings.dropbox_app_key)
-        application_secret = str(settings.dropbox_app_secret)
-        self.user_token = str(settings.dropbox_usr_token)
-        self.user_secret = str(settings.dropbox_usr_secret)
+        DB = dropox_info.get_by_key_name('DROPBOX_SECRETS')
+        application_key = str(DB.app_key)
+        application_secret = str(DB.app_secret)
+        self.user_token = str(DB.usr_token)
+        self.user_secret = str(DB.usr_secret)
         self.callback_url = callback_url
         self.client = oauth.DropboxClient(application_key,
                                           application_secret,
@@ -70,3 +66,13 @@ class dropbox_api():
                                                headers=head,
                                                body=file_contents)
         return api_request.get_result().content
+
+def mb_limit(pic):
+    MB = 1000000.0
+    if len(pic) > MB:
+        degrade = int((MB/len(pic)) * 100)
+        this_pic = images.Image(pic)
+        this_pic.im_feeling_lucky()
+        return this_pic.execute_transforms(output_encoding=images.JPEG, quality=degrade)
+    else:
+        return pic
