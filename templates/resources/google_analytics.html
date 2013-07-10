@@ -1,8 +1,8 @@
-{% if settings.google_analytics %}
+{% if google_analytics %}
     <script type="text/javascript">
 
         var _gaq = _gaq || [];
-        _gaq.push(['_setAccount', '{{ settings.google_analytics }}']);
+        _gaq.push(['_setAccount', '{{ google_analytics }}']);
         _gaq.push(['_trackPageview']);
 
         (function() {

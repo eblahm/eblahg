@@ -12,6 +12,7 @@ from google.appengine.api import taskqueue
 from google.appengine.api import memcache
 from google.appengine.api import urlfetch
 import oauth
+from HTMLParser import HTMLParser
 
 class dropox_info(db.Model):
     app_key = db.StringProperty()
@@ -76,3 +77,17 @@ def mb_limit(pic):
         return this_pic.execute_transforms(output_encoding=images.JPEG, quality=degrade)
     else:
         return pic
+
+class MLStripper(HTMLParser):
+    def __init__(self):
+        self.reset()
+        self.fed = []
+    def handle_data(self, d):
+        self.fed.append(d)
+    def get_data(self):
+        return ''.join(self.fed)
+
+def strip_tags(html):
+    s = MLStripper()
+    s.feed(html)
+    return s.get_data()

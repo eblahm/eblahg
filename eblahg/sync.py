@@ -19,10 +19,16 @@ from eblahg.utility import dropbox_api, dropox_info
 
 class main(webapp2.RequestHandler):
     def get(self):
+        di = dropox_info(key_name='DROPBOX_SECRETS')
+        di.put()
         DB = dropbox_api()
         pics_meta = DB.request_meta('/pics')
-        data = json.dumps(pics_meta)
-        render.page(self, '/templates/base.html', values={'dumb_content': data})
+        # data = json.loads(str(pics_meta))
+        # if data.get('error', False) is not False:
+        #     content = "good"
+        # else:
+        #     content = data
+        render.page(self, '/templates/base.html', values={'dumb_content': pics_meta})
 
 class handshake(webapp2.RequestHandler):
     def get(self, mode="login"):

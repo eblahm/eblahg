@@ -1,7 +1,7 @@
 import webapp2
 import re
 import render
-import tools
+import utility
 import random
 import pictures
 from google.appengine.ext import db
@@ -55,7 +55,7 @@ class term(webapp2.RequestHandler):
                         this_term = term
                     highlighted = '<span class="highlight">%s</span>' % (this_term)
                     this_snip = e.value.replace("<br", "")
-                    this_snip = tools.strip_tags(this_snip)
+                    this_snip = utility.strip_tags(this_snip)
                     rec.snip += re.sub(term, highlighted, this_snip, count=10, flags=re.IGNORECASE)
                 posts.append(rec)
 

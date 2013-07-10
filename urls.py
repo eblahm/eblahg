@@ -10,11 +10,11 @@ app = webapp2.WSGIApplication([
         ('/search', search.term),
         ('/pic/sbar', pictures.sbar),
         ('/pic', pictures.single),
-        ('/(.+)', render.not_found),
+        ('/.+', render.not_found),
     ], debug=True)
 
 sync_agent = webapp2.WSGIApplication([
-        ('/sync/(.+)', sync.handshake),
+        # ('/sync/(.+)', sync.handshake),
         ('/sync', sync.main),
-        ('/(.+)', render.not_found),
+        ('/.+', render.not_found),
     ], debug=True)

@@ -16,7 +16,7 @@ handlers:
   static_files: favicon.ico
   upload: favicon\.ico
 
-- url: /sync.+
+- url: /syn.+
   login: admin
   script: urls.sync_agent
   secure: always
