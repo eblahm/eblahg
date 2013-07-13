@@ -1,20 +1,14 @@
 import fix_path
 fix_path.fix()
-import config
+import oauth
+
 import urllib
 import json
-import re
-from datetime import datetime
-import webapp2
-from google.appengine.ext import db
-from google.appengine.api import images
-from google.appengine.api import taskqueue
-from google.appengine.api import memcache
-from google.appengine.api import urlfetch
-import oauth
 from HTMLParser import HTMLParser
-import re
-import models
+
+from google.appengine.ext import db
+from google.appengine.api import urlfetch
+
 
 class dropox_info(db.Model):
     app_key = db.StringProperty()
@@ -69,37 +63,6 @@ class dropbox_api():
                                                headers=head,
                                                body=file_contents)
         return api_request.get_result().content
-
-
-def upload_pic(path, rev, client=dropbox_api()):
-    this_pic = client.request_file(path)
-    this_pic = mb_limit(this_pic)
-    try:
-        title = re.search(r'([^\/]*)\..{,3}$', path).group(1)
-    except:
-        try:
-            title = re.search(r'[^\/]*$').group(0)
-        except:
-            title = path
-    new_picture = models.pics(
-        key_name=path,
-        title = title,
-        pic = db.Blob(this_pic),
-        sidebar = True,
-    )
-    new_picture.rev = rev
-    new_picture.put()
-    return new_picture
-
-def mb_limit(pic):
-    MB = 1000000.0
-    if len(pic) > MB:
-        degrade = int((MB/len(pic)) * 100)
-        this_pic = images.Image(pic)
-        this_pic.im_feeling_lucky()
-        return this_pic.execute_transforms(output_encoding=images.JPEG, quality=degrade)
-    else:
-        return pic
 
 class MLStripper(HTMLParser):
     def __init__(self):

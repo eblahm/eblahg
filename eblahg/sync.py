@@ -5,14 +5,13 @@ import re
 
 import webapp2
 from google.appengine.api import taskqueue
+from google.appengine.api import memcache
 import oauth
 
 from eblahg import models, render
-from eblahg.utility import dropbox_api, dropox_info, upload_pic
+from eblahg.utility import dropbox_api, dropox_info
+from eblahg.pictures import upload_pic
 from externals.pytz.gae import pytz
-
-import os
-
 
 
 def sync_datastore():
@@ -20,7 +19,7 @@ def sync_datastore():
 
     dstore = {}
     for p in models.pics.all():
-        dstore[p.key().name()] = p.rev
+        dstore[p.path] = p.rev
 
     remote_pics = dropbox.request_meta('/pics')
     accepted = ['jpeg', 'jpg', 'png', 'gif', 'bmp']
@@ -38,9 +37,9 @@ def sync_datastore():
                     dstore.pop(remote['path'])
 
     for deleted in dstore:
-        rec = models.pics.get_by_key_name(deleted)
+        rec = models.pics.all().filter('path =', deleted).get()
         rec.delete()
-
+    memcache.flush_all()
     return True
 
 html_template = '/templates/main/dropbox.html'

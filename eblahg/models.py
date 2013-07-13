@@ -75,6 +75,7 @@ class articles(db.Model):
 
 class pics(db.Model):
     title = db.StringProperty()
+    path = db.StringProperty()
     rev = db.StringProperty()
     pic = db.BlobProperty()
     sidebar = db.BooleanProperty()
