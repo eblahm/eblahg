@@ -8,12 +8,12 @@
                 <h4>Dropbox Settings</h4>
                 {{ save_message }}
                     <form action="/dropbox" method="POST">
-                    {% if wrong_key %}<em style="color: red">Wrong App Key or Secret, Try Again!</em>{% endif %}
+                    {% if error %}<em style="color: red">There was an error, Try Again!</em>{% endif %}
                         <table>
 
                           <tr><td style="width:100px"><strong>App Key:</strong></td>  <td><input name="app_key" {% if app_key %}value="{{ app_key }}"{% endif %}></td></tr>
                           <tr><td style="width:100px"><strong>App Secret:</strong></td>  <td><input name="app_secret" {% if app_secret %}value="{{ app_secret }}"{% endif %}></td></tr>
-                          <tr><td style="text-align: right" colspan="2"><input type="submit" value="save"></td></tr>
+                          <tr><td style="text-align: right" colspan="2"><input type="submit" value="sync"></td></tr>
 
                         </table>
                     </form>

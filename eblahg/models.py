@@ -35,7 +35,6 @@ class articles(db.Model):
     path = db.StringProperty()
 
     def put(self):
-
         self.word_count = len([w for w in self.body.replace('\n', "").split(" ") if w.strip() <> ""])
 
         if self.slug == None:
@@ -67,10 +66,6 @@ class articles(db.Model):
                         logging.error('Slug not unique!')
                         assert False
 
-
-
-
-
     def populate_html_fields(self):
         # Setup Markdown with the code highlighter
         md = markdown.Markdown(extensions=['codehilite', 'footnotes'])
@@ -82,8 +77,8 @@ class pics(db.Model):
     title = db.StringProperty()
     rev = db.StringProperty()
     pic = db.BlobProperty()
-    alt_url = db.StringProperty()
-    collection = db.StringProperty()
+    sidebar = db.BooleanProperty()
+
 
 def create_doc(rec):
     def normalize(field):

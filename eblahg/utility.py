@@ -13,6 +13,8 @@ from google.appengine.api import memcache
 from google.appengine.api import urlfetch
 import oauth
 from HTMLParser import HTMLParser
+import re
+import models
 
 class dropox_info(db.Model):
     app_key = db.StringProperty()
@@ -67,6 +69,28 @@ class dropbox_api():
                                                headers=head,
                                                body=file_contents)
         return api_request.get_result().content
+
+
+def upload_pic(path, rev):
+    dropbox = dropbox_api()
+    this_pic = dropbox.request_file(path)
+    this_pic = mb_limit(this_pic)
+    try:
+        title = re.search(r'([^\/]*)\..{,3}$', path).group(1)
+    except:
+        try:
+            title = re.search(r'[^\/]*$').group(0)
+        except:
+            title = path
+    new_picture = models.pics(
+        key_name=path,
+        title = title,
+        pic = db.Blob(this_pic),
+        sidebar = True,
+    )
+    new_picture.rev = rev
+    new_picture.put()
+    return new_picture
 
 def mb_limit(pic):
     MB = 1000000.0

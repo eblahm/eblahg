@@ -14,8 +14,33 @@ from google.appengine.api import urlfetch
 import oauth
 import logging
 from eblahg import models, render
-from eblahg.utility import dropbox_api, dropox_info
+from eblahg.utility import dropbox_api, dropox_info, upload_pic
 
+
+def sync_datastore():
+    dropbox = dropbox_api()
+    pics_meta = dropbox.request_meta('/pics')
+
+    if 'error' in pics_meta:
+        assert False
+    else:
+        dstore = {}
+        for p in models.pics.all():
+            dstore[p.path] = p.rev
+
+        for remote in pics_meta['contents']:
+            dstore_rev = dstore.get(remote['path'], "")
+            if dstore_rev != remote['rev']:
+                upload_pic(remote['path'], remote['rev'])
+                if dstore_rev != "":
+                    dstore.pop(remote['path'])
+
+        for deleted in dstore:
+            rec = models.pics.get_by_key_name(deleted)
+            rec.delete()
+    return True
+
+html_template = '/templates/main/dropbox.html'
 
 class main(webapp2.RequestHandler):
     def get(self):
@@ -29,7 +54,7 @@ class main(webapp2.RequestHandler):
                 app_secret='gqod403qntsb51g'
             ) # initialize
             di.put() # initialize
-            render.page(self, '/templates/main/dropbox.html', values=v)
+            render.page(self, html_template, values=v)
         else:
             v.update({'app_key': db_info.app_key, 'app_secret': db_info.app_secret})
             DB = dropbox_api()
@@ -41,21 +66,28 @@ class main(webapp2.RequestHandler):
                     self.redirect('/sync/login')
                 else:
                     # scenario 3 -> oauth handshake fail
-                    v.update({'wrong_key': True})
-                    render.page(self, '/templates/main/dropbox.html', values=v)
+                    v.update({'error': True})
+                    render.page(self, html_template, values=v)
             else:
                 # scenario 4 -> user is authorized
                 content = pics_meta
-                render.page(self, '/templates/main/dropbox.html', values=v)
+                render.page(self, html_template, values=v)
     def post(self):
+        v = {}
         di = dropox_info.get_by_key_name('DROPBOX_SECRETS')
         di.app_key = self.request.get('app_key')
         di.app_secret = self.request.get('app_secret')
         di.save()
-        self.redirect('/sync/login')
+        v.update({'app_key': di.app_key, 'app_secret': di.app_secret})
+        sync_datastore()
+        v.update({'sync': True})
+        render.page(self, html_template, values=v)
+        # except:
+        #     v.update({'error': True})
+        #     render.page(self, html_template, values=v)
 
-def sync_datastore():
-    dropbox = dropbox_api()
+
+
 
 
 class handshake(webapp2.RequestHandler):
@@ -82,6 +114,8 @@ class handshake(webapp2.RequestHandler):
             for p in paths:
                 params = {'root': 'sandbox', 'path': p}
                 api_request = dropbox.create_folder(params)
-            self.redirect('/dropbox?attempt=2')
+            sync_datastore()
+            self.redirect('/dropbox')
+
 
 
