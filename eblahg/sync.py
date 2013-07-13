@@ -19,51 +19,60 @@ from eblahg.utility import dropbox_api, dropox_info
 
 class main(webapp2.RequestHandler):
     def get(self):
-        di = dropox_info(key_name='DROPBOX_SECRETS')
-        di.put()
+        # scenario 1 -> new user
+        db_info = dropox_info.get_by_key_name('DROPBOX_SECRETS')
+        if db_info == None:
+            di = dropox_info(
+                key_name='DROPBOX_SECRETS',
+                app_key='oakhf7vqc9cqy6d',
+                app_secret='gqod403qntsb51g'
+            ) # initialize
+            di.put() # initialize
+            render.page(self, '/templates/base.html', values={'dumb_content': 'please enter app key or secret incorrect'})
+
+        # scenario 2 -> oauth handshake fail
+        if bool(self.request.get('error')) is True:
+            render.page(self, '/templates/base.html', values={'dumb_content': 'app key or secret incorrect'})
+
         DB = dropbox_api()
         pics_meta = DB.request_meta('/pics')
-        # data = json.loads(str(pics_meta))
-        # if data.get('error', False) is not False:
-        #     content = "good"
-        # else:
-        #     content = data
-        render.page(self, '/templates/base.html', values={'dumb_content': pics_meta})
+        if 'error' in pics_meta:
+            if self.request.get('attempt') != '2':
+                # scenario 2 -> first attempt at oauth after inputing app key and secret
+                # redirect to handshake
+                self.redirect('/sync/login')
+            else:
+                # scenario 3 -> oauth handshake fail, redirect
+                self.redirect('/dropbox?error=True')
+        else:
+            # scenario 4 -> user is authorized
+            content = pics_meta
+            render.page(self, '/templates/base.html', values={'dumb_content': content})
 
 class handshake(webapp2.RequestHandler):
     def get(self, mode="login"):
-        callback = self.request.host_url + '/sync/initialize'
-        try:
+        if mode == 'login':
+            callback = self.request.host_url + '/sync/initialize'
             dropbox = dropbox_api(callback)
-            minimum_dbox_info = True
-        except:
-            minimum_dbox_info = False
+            redirect_url = dropbox.client.get_authorization_url()
+            self.redirect(redirect_url)
+        if mode == 'initialize':
+            request_token = self.request.get("oauth_token")
+            request_secret = self.request.get("oauth_token_secret")
+            dropbox = dropbox_api()
+            data = dropbox.client.get_user_info(request_token, auth_verifier=request_secret)
+            DB_info = dropox_info.get_by_key_name('DROPBOX_SECRETS')
+            DB_info.usr_secret = data['secret']
+            DB_info.usr_token = data['token']
+            DB_info.put()
 
-        if minimum_dbox_info:
-            if mode == 'login':
-                redirect_url = dropbox.client.get_authorization_url()
-                self.redirect(redirect_url)
+            # restart dropbox client with access token and secret
+            dropbox = dropbox_api()
+            # create the default file structure
+            paths = ['/sidebar']
+            for p in paths:
+                params = {'root': 'sandbox', 'path': p}
+                api_request = dropbox.create_folder(params)
+            self.redirect('/dropbox?attempt=2')
 
-            if mode == 'initialize':
-                request_token = self.request.get("oauth_token")
-                request_secret = self.request.get("oauth_token_secret")
-                data = dropbox.client.get_user_info(request_token, auth_verifier=request_secret)
-
-                saved_info = dropox_info.get_by_key_name('DROPBOX_SECRETS')
-                if saved_info is None:
-                    saved_info = dropox_info(key_name='DROPBOX_SECRETS')
-                saved_info.usr_secret = data['secret']
-                saved_info.usr_token = data['token']
-                saved_info.put()
-
-                # restart dropbox client with access token and secret
-                dropbox = dropbox_api()
-                # create the default file structure
-                paths = ['/test']
-                for p in paths:
-                    params = {'root': 'sandbox', 'path': p}
-                    api_request = dropbox.create_folder(params)
-                self.redirect('/sync')
-        else:
-            self.redirect('/sync')
 

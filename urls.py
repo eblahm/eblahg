@@ -14,7 +14,7 @@ app = webapp2.WSGIApplication([
     ], debug=True)
 
 sync_agent = webapp2.WSGIApplication([
-        # ('/sync/(.+)', sync.handshake),
-        ('/sync', sync.main),
+        ('/sync/(.+)', sync.handshake),
+        ('/dropbox', sync.main),
         ('/.+', render.not_found),
     ], debug=True)

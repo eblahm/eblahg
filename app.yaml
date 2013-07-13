@@ -1,5 +1,5 @@
-application: eblahm
-version: 3
+application: eblahg
+version: 1
 runtime: python27
 api_version: 1
 threadsafe: yes
@@ -15,6 +15,11 @@ handlers:
 - url: /favicon\.ico
   static_files: favicon.ico
   upload: favicon\.ico
+
+- url: /dropbox
+  login: admin
+  script: urls.sync_agent
+  secure: always
 
 - url: /syn.+
   login: admin
