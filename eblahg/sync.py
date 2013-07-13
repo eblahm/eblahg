@@ -1,35 +1,42 @@
 import fix_path
 fix_path.fix()
 from datetime import datetime
+import re
 
 import webapp2
-from google.appengine.ext import db
 from google.appengine.api import taskqueue
-from google.appengine.api import memcache
 import oauth
 
 from eblahg import models, render
 from eblahg.utility import dropbox_api, dropox_info, upload_pic
 from externals.pytz.gae import pytz
 
+import os
+
+
 
 def sync_datastore():
+
     dropbox = dropbox_api()
     pics_meta = dropbox.request_meta('/pics')
     dstore = {}
+
     for p in models.pics.all():
         dstore[p.key().name()] = p.rev
 
+    accepted = ['jpeg', 'jpg', 'png', 'gif', 'bmp']
     for remote in pics_meta.get('contents', []):
-        dstore_rev = dstore.get(remote['path'], "")
-        if dstore_rev != remote['rev']:
-            taskqueue.add(url='/sync/upload',
-                params={
-                    'path': remote['path'],
-                    'rev': remote['rev'],
-                })
-            if dstore_rev != "":
-                dstore.pop(remote['path'])
+        file_type = re.search(r'[^\.]*$', remote['path']).group(0).lower()
+        if file_type in accepted:
+            dstore_rev = dstore.get(remote['path'], "")
+            if dstore_rev != remote['rev']:
+                taskqueue.add(url='/sync/upload',
+                    params={
+                        'path': remote['path'],
+                        'rev': remote['rev'],
+                    })
+                if dstore_rev != "":
+                    dstore.pop(remote['path'])
 
     for deleted in dstore:
         rec = models.pics.get_by_key_name(deleted)
@@ -80,11 +87,6 @@ class main(webapp2.RequestHandler):
                 message = 'synced @ %s' % (now.astimezone(pytz.timezone('America/New_York')).strftime('%I:%M:%S%p %Z'))
                 v['sync'] =  message
                 render.page(self, html_template, values=v)
-
-
-
-
-
 
 class handshake(webapp2.RequestHandler):
     def get(self, mode="login"):
