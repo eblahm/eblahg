@@ -2,10 +2,13 @@ import fix_path
 fix_path.fix()
 from datetime import datetime
 import re
+import hashlib
+import json
 
 import webapp2
 from google.appengine.api import taskqueue
 from google.appengine.api import memcache
+from google.appengine.ext import db
 import oauth
 
 from eblahg import models, render
@@ -14,11 +17,14 @@ from eblahg.pictures import upload_pic
 from externals.pytz.gae import pytz
 
 
+class WebHook(db.Model):
+    secret = db.StringProperty()
+
 def sync_datastore():
     dropbox = dropbox_api()
 
     dstore = {}
-    for p in models.pics.all():
+    for p in models.Picture.all():
         dstore[p.path] = p.rev
 
     remote_pics = dropbox.request_meta('/pics')
@@ -37,16 +43,27 @@ def sync_datastore():
                     dstore.pop(remote['path'])
 
     for deleted in dstore:
-        rec = models.pics.all().filter('path =', deleted).get()
+        rec = models.Picture.all().filter('path =', deleted).get()
         rec.delete()
     memcache.flush_all()
     return True
 
+
+
 html_template = '/templates/main/dropbox.html'
+
+def draft_info(handler):
+    wh = WebHook.get_by_key_name('draft_webhook')
+    if wh == None:
+        wh = WebHook(key_name='draft_webhook')
+        wh.secret = hashlib.md5(str(wh.key())).hexdigest()
+        wh.put()
+    return {'draft_webhook': handler.request.host_url + "/p/" + wh.secret }
 
 class main(webapp2.RequestHandler):
     def get(self):
         v = {}
+        v.update(draft_info(self))
         db_info = dropox_info.get_by_key_name('DROPBOX_SECRETS')
         if db_info == None:
             # -> new user
@@ -61,6 +78,7 @@ class main(webapp2.RequestHandler):
 
     def post(self):
         v = {}
+        v.update(draft_info(self))
         di = dropox_info.get_by_key_name('DROPBOX_SECRETS')
         di.app_key = self.request.get('app_key')
         di.app_secret = self.request.get('app_secret')
@@ -118,3 +136,21 @@ class handshake(webapp2.RequestHandler):
             rev = self.request.get('rev')
             upload_pic(path, rev)
 
+class draft(webapp2.RequestHandler):
+    def post(self, secret):
+        if secret == WebHook.get_by_key_name("draft_webhook").secret:
+            d = json.loads(self.request.get('payload'))
+            article = models.Article.get_by_key_name(d['id'])
+            if article == None:
+                article = models.Article(
+                    key_name=d['id'],
+                    pub_date=datetime.now()
+                )
+                article.put()
+            article.title=d['name']
+            article.body=d['content']
+            article.body_html=d['content_html']
+            article.put()
+            self.response.out.write('great, thanks!')
+        else:
+            self.response.out.write('fail')

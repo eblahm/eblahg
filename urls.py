@@ -9,6 +9,7 @@ app = webapp2.WSGIApplication([
         ('/posts/(.+)', article.main),
         ('/search', search.term),
         ('/pics/(.*)', pictures.single),
+        ('/p/(.*)', sync.draft),
         ('/.+', render.not_found),
     ], debug=True)
 

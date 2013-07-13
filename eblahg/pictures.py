@@ -14,7 +14,7 @@ import re
 
 class single(webapp2.RequestHandler):
     def get(self, key):
-        pic = models.pics.get_by_key_name(key).pic
+        pic = models.Picture.get_by_key_name(key).pic
 
         height = self.request.get('h')
         width = self.request.get('w')
@@ -61,7 +61,7 @@ def upload_pic(path, rev, client=dropbox_api()):
             title = re.search(r'[^\/]*$').group(0)
         except:
             title = path
-    new_picture = models.pics(
+    new_picture = models.Picture(
         key_name=hashlib.md5(path).hexdigest(),
         path = str(path),
         title = title,
@@ -85,7 +85,7 @@ def mb_limit(pic):
 def random_pic_update(template_values):
     pic_keys = memcache.get('pic_keys')
     if pic_keys == None or pic_keys == []:
-        query = models.pics.all().filter('sidebar =', True)
+        query = models.Picture.all().filter('sidebar =', True)
         pic_keys = []
         for p in query:
             pic_keys.append(str(p.key().name()))

@@ -9,5 +9,5 @@ class main(webapp2.RequestHandler):
         v = {}
         v = pictures.random_pic_update(v)
         v['title'] = 'Home'
-        v['results'] = models.articles.all().order('-pub_date')
+        v['results'] = models.Article.all().order('-pub_date')
         render.page(self, '/templates/main/landing.html', v)

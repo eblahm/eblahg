@@ -20,19 +20,12 @@ def slugify(value):
     value = unicode(re.sub('[^\w\s-]', '', value).strip().lower())
     return re.sub('[-\s]+', '-', value)
 
-class articles(db.Model):
+class Article(db.Model):
     title = db.StringProperty()
     body = db.TextProperty()
     body_html = db.TextProperty()
     slug = db.StringProperty()
-    pub_date = db.DateTimeProperty(auto_now_add=True)
-    author = db.UserProperty(auto_current_user_add=True)
-
-    tags = db.StringListProperty()
-    word_count = db.IntegerProperty()
-    last_updated = db.DateTimeProperty()
-    rev = db.StringProperty()
-    path = db.StringProperty()
+    pub_date = db.DateTimeProperty()
 
     def put(self):
         self.word_count = len([w for w in self.body.replace('\n', "").split(" ") if w.strip() <> ""])
@@ -42,21 +35,17 @@ class articles(db.Model):
         self.test_for_slug_collision()
         self.populate_html_fields()
 
-        key = super(articles, self).put()
+        key = super(Article, self).put()
         text_write = create_doc(self)
         return key
     def delete(self):
         search.Index(name='articles').delete(str(self.key()))
-        key = super(articles, self).delete()
+        key = super(Article, self).delete()
         return key
 
     def test_for_slug_collision(self):
-        # Build the time span to check for slug uniqueness
-
-        # Create a query to check for slug uniqueness in the specified time span
-        query = articles.all(keys_only=True).filter('slug = ', self.slug)
+        query = Article.all(keys_only=True).filter('slug = ', self.slug)
         query_count = query.count()
-
         if query_count > 0:
             if query_count == 1 and not self.is_saved():
                 if self.is_saved():
@@ -73,7 +62,7 @@ class articles(db.Model):
             self.body_html = md.convert(self.body)
 
 
-class pics(db.Model):
+class Picture(db.Model):
     title = db.StringProperty()
     path = db.StringProperty()
     rev = db.StringProperty()
@@ -83,18 +72,14 @@ class pics(db.Model):
 
 def create_doc(rec):
     def normalize(field):
-        if field <> None:
+        if isinstance(field, unicode):
             return field.encode('ascii', 'ignore')
         else:
-            return field
-    if rec.tags <> None:
-        tags = normalize(", ".join(rec.tags))
-    else:
-        tags = None
+            return str(field)
+
     new_doc = search.Document(doc_id=str(rec.key()),
         fields=[search.TextField(name='title', value=normalize(rec.title)),
                 search.TextField(name='body', value=normalize(rec.body)),
-                search.TextField(name='tags', value=tags),
                 search.DateField(name='date', value=rec.pub_date.date()),])
     search.Index(name="articles").put(new_doc)
     return 'good'
