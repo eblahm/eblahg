@@ -8,23 +8,18 @@ from google.appengine.api import images
 from google.appengine.api import memcache
 
 def random_pic_update(template_values):
-    folder_serialized = memcache.get('sidebar_folder_serialized')
-    if folder_serialized == None:
-        query = models.pics.all().filter('collection =', 'sidebar').run(limit=2000)
-        fs = []
+    pic_ids = memcache.get('pic_keys')
+    if pic_ids == None:
+        query = models.pics.all().filter('sidebar =', True)
+        pic_keys = []
         for p in query:
-            fs.append(str(p.key()))
-        memcache.set('sidebar_folder_serialized', fs)
-        folder_serialized = memcache.get('sidebar_folder_serialized')
-    limit = len(folder_serialized) - 1
-    if limit >= 1:
-        ran_num = random.randint(0, limit)
-        random_pic = db.get(folder_serialized[ran_num])
-    else:
-        random_pic = models.pics.all().filter('collection =', 'sidebar').get()
+            pic_keys.append(str(p.key()))
+        memcache.set('pic_keys', pic_keys)
+        pic_keys = memcache.get('pic_keys')
+
+    ran_num = random.randint(0, len(pic_ids))
     try:
-        template_values['random_picture_key'] = str(random_pic.key())
-        template_values['random_picture_path'] = urllib.quote(random_pic.key().name())
+        template_values['random_picture_id'] = pic_ids[ran_num]
     except:
         pass
     return template_values
@@ -60,15 +55,35 @@ class sbar(webapp2.RequestHandler):
 
 
 class single(webapp2.RequestHandler):
-    def get(self):
-        size = self.request.get('size')
-        rec = db.get(self.request.get('k'))
-        if size == 'thumbnail':
+    def get(self, id):
+        rec = models.pics.get_by_id(id)
+
+        height = self.request.get('h')
+        width = self.request.get('w')
+        if height != "" and width != "":
+            sbar_height = int(float(height))
+            sbar_width = int(float(width))
+
+            img = images.Image(rec.pic)
+            img.resize(height=sbar_height)
+            if img.width <= sbar_width:
+                img = img.execute_transforms(output_encoding=images.JPEG)
+            else:
+                ratio = sbar_width/float(img.width)
+                left = (1 - float(ratio)) / 2
+                right = left + ratio
+                if img.height > img.width:
+                    left = left * 0.7
+                    right = 1 - left
+                img.crop(left, 0.0, right, 1.0)
+                img = img.execute_transforms(output_encoding=images.JPEG)
+        elif self.request.get('size') == 'thumbnail':
             img = images.Image(rec.pic)
             img.resize(width=100) #, height=180)
             img = img.execute_transforms(output_encoding=images.JPEG)
         else:
             img = rec.pic
+
         self.response.headers['Content-Type'] = 'image/jpeg'
         self.response.out.write(img)
 

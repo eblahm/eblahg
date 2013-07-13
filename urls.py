@@ -8,8 +8,7 @@ app = webapp2.WSGIApplication([
         ('/tag/([-\w]+)', search.tag),
         ('/posts/(.+)', article.main),
         ('/search', search.term),
-        ('/pic/sbar', pictures.sbar),
-        ('/pic', pictures.single),
+        ('/pics/(.*)', pictures.single),
         ('/.+', render.not_found),
     ], debug=True)
 

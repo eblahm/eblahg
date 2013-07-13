@@ -16,16 +16,15 @@ import os
 
 
 def sync_datastore():
-
     dropbox = dropbox_api()
-    pics_meta = dropbox.request_meta('/pics')
-    dstore = {}
 
+    dstore = {}
     for p in models.pics.all():
         dstore[p.key().name()] = p.rev
 
+    remote_pics = dropbox.request_meta('/pics')
     accepted = ['jpeg', 'jpg', 'png', 'gif', 'bmp']
-    for remote in pics_meta.get('contents', []):
+    for remote in remote_pics.get('contents', []):
         file_type = re.search(r'[^\.]*$', remote['path']).group(0).lower()
         if file_type in accepted:
             dstore_rev = dstore.get(remote['path'], "")
