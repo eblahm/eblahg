@@ -71,9 +71,8 @@ class dropbox_api():
         return api_request.get_result().content
 
 
-def upload_pic(path, rev):
-    dropbox = dropbox_api()
-    this_pic = dropbox.request_file(path)
+def upload_pic(path, rev, client=dropbox_api()):
+    this_pic = client.request_file(path)
     this_pic = mb_limit(this_pic)
     try:
         title = re.search(r'([^\/]*)\..{,3}$', path).group(1)

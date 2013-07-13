@@ -18,12 +18,16 @@ def sync_datastore():
     pics_meta = dropbox.request_meta('/pics')
     dstore = {}
     for p in models.pics.all():
-        dstore[p.path] = p.rev
+        dstore[p.key().name()] = p.rev
 
     for remote in pics_meta.get('contents', []):
         dstore_rev = dstore.get(remote['path'], "")
         if dstore_rev != remote['rev']:
-            upload_pic(remote['path'], remote['rev'])
+            taskqueue.add(url='/sync/upload',
+                params={
+                    'path': remote['path'],
+                    'rev': remote['rev'],
+                })
             if dstore_rev != "":
                 dstore.pop(remote['path'])
 
@@ -72,8 +76,8 @@ class main(webapp2.RequestHandler):
                 # -> user is authorized
                 v.update({'app_key': di.app_key, 'app_secret': di.app_secret})
                 sync_datastore()
-                now_est = datetime.now().replace(tzinfo=pytz.timezone('America/New_York'))
-                message = 'synced @ %s' % (now_est.strftime('%I:%M:%S%p %Z'))
+                now = datetime.now().replace(tzinfo=pytz.utc)
+                message = 'synced @ %s' % (now.astimezone(pytz.timezone('America/New_York')).strftime('%I:%M:%S%p %Z'))
                 v['sync'] =  message
                 render.page(self, html_template, values=v)
 
@@ -108,6 +112,9 @@ class handshake(webapp2.RequestHandler):
                 params = {'root': 'sandbox', 'path': p}
                 api_request = dropbox.create_folder(params)
             self.redirect('/dropbox')
+    def post(self, mode):
         if mode == 'upload':
-            dropbox = dropbox_api()
+            path = self.request.get('path')
+            rev = self.request.get('rev')
+            upload_pic(path, rev)
 
