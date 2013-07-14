@@ -1,8 +1,6 @@
 ## Description
 
-Eblahg is a dedicated blogging app for the Google App engine platform.  It uses Markdown and the Dropbox REST Api.  See a live example [here](http://eblahm.appspot.com)
-
-Its is still a work in progress. Feel free to contribute.
+Eblahg is my dedicated blogging app for the Google App Engine platform.  It uses a [Draft](https://draftin.com/) webhook for editing and publishing and it uses Dropbox REST Api to add images to a randomized sidebar.  See a live example [here](http://eblahm.appspot.com)
 
 ## Requirments
 
@@ -17,18 +15,17 @@ Once you clone the repository follow these steps
 
 2. Deploy the code to App Engine using the SDK
 
-3. Visit /config and fill in the appropriate info for your blog
+3. Visit /settings and fill in your dropbox info
 
-4. Click the "INITIALIZE DROPBOX API CLIENT" button.  This will create the file structure within the Apps folder of your Dropbox
+4. Click the "sync" button.  This will create the file structure within the Apps folder of your Dropbox
 
-5. add content to the "published", "pics", and "sidebar_pics" folders
+5. add images to the "pics" folders.  Pictures in this folder form the basis of the random sidebar
 
-6. manually launch sync script using the url: /admin/sync
-You can make this task reoccur as often as you like using cron.yaml
-
+6. [Add your draft webhook url](https://draftin.com/publishers) (hint: your secret url is located @ /settings page)
 
 ## Credits:
-Twitter Bootstrap  
+Twitter Bootstrap
+Jquery  
 Mike Knapp - [AppEngine-OAuth-Library](https://github.com/mikeknapp/AppEngine-OAuth-Library)  
 Joey Bratton [joeyb-blog](https://github.com/joeyb/joeyb-blog)  
 Markdown 2.0.1  
