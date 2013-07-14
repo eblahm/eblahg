@@ -19,14 +19,16 @@
     <script src="/js/main.js"></script>
     <link href="/css/style.css" rel="stylesheet">
     <script type="text/javascript">
-      var social_html = '<div style="text-align:center">' +
-{% if gplus != None %} '<a href="{{ gplus }}"><img src="/img/social/gplus.png" alt="gplus"/></a>' + {% endif %}
-{% if youtube != None %} '<a href="{{ youtube }}"><img src="/img/social/youtube.png" alt="youtube"/></a>' + {% endif %}
-{% if facebook != None %} '<a href="{{ facebook }}"><img src="/img/social/facebook.png" alt="facebook"/></a>' + {% endif %}
-{% if linkedin != None %} '<a href="{{ linkedin }}"><img src="/img/social/linkedin.png" alt="linkedin"/></a>' + {% endif %}
-{% if twitter != None %}'<a href="{{ twitter }}"><img src="/img/social/twitter.png" alt="twitter"/></a>' + {% endif %}
-{% if adn != None %}'<a href="{{ adn }}"><img src="/img/social/app_net.png" alt="app_net"/></a>' + {% endif %}
-{% if kippt != None %}'<a href="{{ kippt }}"><img src="/img/social/kippt.png" alt="kippt"/></a>' + {% endif %}
+      var social_html = '<div id="pover" style="text-align:center">' +
+{% if gplus %} '<a href="{{ gplus }}"><img src="/img/social/gplus.png" alt="gplus"/></a>' + {% endif %}
+{% if youtube %} '<a href="{{ youtube }}"><img src="/img/social/youtube.png" alt="youtube"/></a>' + {% endif %}
+{% if facebook %} '<a href="{{ facebook }}"><img src="/img/social/facebook.png" alt="facebook"/></a>' + {% endif %}
+{% if linkedin %} '<a href="{{ linkedin }}"><img src="/img/social/linkedin.png" alt="linkedin"/></a>' + {% endif %}
+{% if twitter %}'<a href="{{ twitter }}"><img src="/img/social/twitter.png" alt="twitter"/></a>' + {% endif %}
+{% if adn %}'<a href="{{ adn }}"><img src="/img/social/app_net.png" alt="app_net"/></a>' + {% endif %}
+{% if kippt %}'<a href="{{ kippt }}"><img src="/img/social/kippt.png" alt="kippt"/></a>' + {% endif %}
+{% if github %}'<a href="{{ github }}"><img width="24px" src="/img/social/github.png" alt="github"/></a>' + {% endif %}
+{% if email %}'<a href="mailto:{{ email }}" title="{{ email }}"><img width="24px" src="/img/social/email.png" alt="email"/></a>' + {% endif %}
 '<a href="/rss"><img src="/img/social/rss.png" alt="rss"/></a>' +
         '</div>';
     </script>
@@ -36,33 +38,36 @@
 </head>
 
 <body>
-<div class="container">
+<div class="container-fluid">
     {% block navbar %}
 
         <div class="navbar navbar-fixed-top">
-               <div id="my_nav" class="container">
-                        <div id="my_nav_inner" class="row">
-                            <div class="span9">
-                                <span style="font-size:25px; font-family: 'Finger Paint', cursive;"> <a href="/">{{ blog_title }}</a></span>
-                                 a blog by <span id="ptrig" data-placement="bottom" rel="popover" href="#" >{{ author }}</span>
+            <div id="my_nav" class="container-fluid">
+               <div id="my_nav_inner">
 
-                            </div>
-                            <div class="span3" style="text-align:right">
-                                    <form id="search_form" method="GET" action="/search">
-                                        <input id="search" name="term" type="text" placeholder="Search..." >
-                                        <input style="display: none;" class="btn" type="submit" value="submit" />
-                                    </form>
-                            </div>
+                                <span style="font-size:25px; font-family: 'Permanent Marker';"> <a href="/">{{ blog_title }} </a></span>
+                                <span class="fun">
+                                     a blog by <span id="ptrig" data-placement="bottom" rel="popover" href="#" >{{ author }}</span>
+                                </span>
+
+                                <form class="pull-right" id="search_form" method="GET" action="/search">
+                                    <input id="search" name="term" type="text" placeholder="Search..." >
+                                    <input style="display: none;" class="btn" type="submit" value="submit" />
+                                </form>
                         </div>
                </div>
          </div>
 
     {% endblock %}
 
-    <div id="main_container" class="container">
-    {% block main_container %}
-        {{ dumb_content }}
-    {% endblock %}
+    <div id="main_container" class="container-fluid">
+        <div class="row-fluid">
+            <div class="span12">
+            {% block main_container %}
+                {{ dumb_content }}
+            {% endblock %}
+            </div>
+        </div>
     </div>
 
 </div>

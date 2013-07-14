@@ -1,7 +1,7 @@
 import webapp2
 import fix_path
 fix_path.fix()
-import models
+from models import Article
 from config import settings
 import PyRSS2Gen
 import datetime
@@ -11,8 +11,7 @@ from google.appengine.ext import db
 class main(webapp2.RequestHandler):
 
     def get(self):
-        query = models.articles.all()
-        query.order('-pub_date')
+        query = Article.all().order('-pub_date')
         posts = query.fetch(10)
 
         rss_items = []
@@ -28,9 +27,9 @@ class main(webapp2.RequestHandler):
             rss_items.append(item)
 
         rss = PyRSS2Gen.RSS2(
-            title=settings.blog_title,
-            link=settings.url,
-            description="a blog by Matt Halbe",
+            title=settings['blog_title'],
+            link=self.request.host_url,
+            description="a blog by " + settings['author'],
             lastBuildDate=datetime.datetime.now(),
             items=rss_items
         )

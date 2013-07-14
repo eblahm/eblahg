@@ -1,10 +1,9 @@
 from fix_path import fix
-import datetime
 import re
 
 from google.appengine.ext import db
 from google.appengine.api import search
-from google.appengine.api import memcache
+
 fix()
 import markdown
 import logging
@@ -25,19 +24,20 @@ class Article(db.Model):
     body = db.TextProperty()
     body_html = db.TextProperty()
     slug = db.StringProperty()
+    word_count = db.IntegerProperty()
     pub_date = db.DateTimeProperty()
 
     def put(self):
-        self.word_count = len([w for w in self.body.replace('\n', "").split(" ") if w.strip() <> ""])
-
-        if self.slug == None:
-            self.slug = slugify(self.title)
+        if self.body != None:
+            self.word_count = len([w for w in self.body.replace('\n', "").split(" ") if w.strip() <> ""])
+        else:
+            self.word_count = 0
+        self.slug = slugify(self.title)
         self.test_for_slug_collision()
-        self.populate_html_fields()
-
         key = super(Article, self).put()
         text_write = create_doc(self)
         return key
+
     def delete(self):
         search.Index(name='articles').delete(str(self.key()))
         key = super(Article, self).delete()

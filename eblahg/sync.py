@@ -50,7 +50,7 @@ def sync_datastore():
 
 
 
-html_template = '/templates/main/dropbox.html'
+html_template = '/templates/main/settings.html'
 
 def draft_info(handler):
     wh = WebHook.get_by_key_name('draft_webhook')
@@ -129,7 +129,7 @@ class handshake(webapp2.RequestHandler):
             for p in paths:
                 params = {'root': 'sandbox', 'path': p}
                 api_request = dropbox.create_folder(params)
-            self.redirect('/dropbox')
+            self.redirect('/settings')
     def post(self, mode):
         if mode == 'upload':
             path = self.request.get('path')
@@ -140,10 +140,11 @@ class draft(webapp2.RequestHandler):
     def post(self, secret):
         if secret == WebHook.get_by_key_name("draft_webhook").secret:
             d = json.loads(self.request.get('payload'))
-            article = models.Article.get_by_key_name(d['id'])
+            article = models.Article.get_by_key_name(str(d['id']))
             if article == None:
                 article = models.Article(
-                    key_name=d['id'],
+                    key_name=str(d['id']),
+                    title=d['name'],
                     pub_date=datetime.now()
                 )
                 article.put()

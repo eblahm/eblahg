@@ -1,20 +1,23 @@
 p {
+    font-family: 'georgia';
     line-height: 1.75em;
-    font-size: 1.2em;
+    font-size: 1.3em;
     margin-bottom:30px;
     margin-top:30px;
 }
+.fun {font-family: 'Gloria Hallelujah'}
 
 /* NAVIGATION BAR */
 #my_nav {
     border-bottom: thin #777777 solid;
     background-color: white;
-
 }
+
 #my_nav_inner {
     margin-top:15px;
     margin-bottom:15px;
 }
+
 #search {
     background: url("/img/search-white.png") no-repeat scroll 10px 6px #FCFCFC;
     border:solid 1px #777777;
@@ -28,9 +31,13 @@ p {
 #ptrig {
     border-bottom:1px dotted;
 }
+
 #ptrig:hover {
     background-color: #ffffe0;
     cursor: pointer;
+}
+#pover a{
+    margin-left: 2px;
 }
 
 .highlight{
@@ -38,12 +45,16 @@ p {
 }
 
 .ar {
+    font-family: 'Gloria Hallelujah';
     padding-top: 30px;
     padding-bottom: 30px;
     padding-left: 10px;
 }
 
-h1 {line-height: 1.75em;}
+h1 {
+    line-height: 1.75em;
+    font-family: 'Gloria Hallelujah';
+}
 
 #ar_title {
     line-height: 1.75em;

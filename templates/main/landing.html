@@ -4,23 +4,14 @@
                 <div id="sidebar" class="span4">
                         {%  if random_picture_key %}
                         <div id="sidebar_inner" data-key="{{ random_picture_key }}">
-                        foo
                         </div>
                         {% endif %}
                 </div>
-                <div class="span8">
-                    {% for article in results %}
-                    <div data-url="/posts/{{ article.slug }}" class="ar">
-                        <div class="ar_title"><a href="posts/{{ article.slug }}">{{ article.title }}</a></div>
-                            {% if article.snip %}<p>{{ article.snip }}</p>{% endif %}
-                        <div class="ar_details">{{ article.pub_date.strftime('%d %b %y') }}
-                            <span class="spc">|</span>{{ article.word_count }} words
 
-{#       {% if article.tags %}<span class="spc">|</span> <i class="icon-tags"></i> {% for tag in article.tags %}{{ tag }} {% endfor %}{% endif %}#}
+                <div id="feed" class="span8" style="padding-bottom: 50px">
 
-                        </div>
-                    </div>
-                    {% endfor %}
+                        {% include "/templates/main/article_links.html" %}
+
                 </div>
             </div>
 

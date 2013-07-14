@@ -2,48 +2,36 @@
 {%  block title %}{{ article.title[:50] }}{% endblock %}
 {%  block main_container %}
         <div class="row-fluid">
-            <div class="span2"></div>
-            <div id="ar_head" class="span8">
-                <h1 id="ar_huge">{{ article.title }}</h1>
-           {{ article.pub_date.strftime('%d %b %y') }}
-            </div>
-            <div class="span2"></div>
-        </div>
 
+            <div id="ar_body" class="span8 offset2">
 
-    {% if picture %}
-        <div class="row-fluid">
-            <div class="span3"></div>
-            <div class="span6" style="text-align: center">
-               <img src='/pic?k={{ picture.key() }}' alt="{{ picture.title }}" width="100%" />
-            </div>
-            <div class="span3"></div>
-        </div>
-    {%  endif %}
+                <header class="fun" style="text-align: center">
+                    <h1 id="ar_huge">{{ article.title }}</h1>
+                    {{ article.pub_date.strftime('%d %b %y') }}
+                </header>
 
-        <div class="row-fluid">
-            <div class="span2"></div>
-            <div id="ar_body" class="span8">
-
+                <article>
                 {{ article.body_html }}
+                </article>
 
                 <br>
                 <br>
-                <br>
+
+                <footer>
                 {% include "/templates/resources/share_buttons.html" %}
-                <br>
+                </footer>
 
             </div>
-            <div class="span2"></div>
+
         </div>
     <div class="row-fluid">
-        <div class="span2"></div>
-        <div id="ar_comments" class="span8">
+
+        <div id="ar_comments" class="span8 offset2">
 
         {% include "/templates/resources/disqus.html" %}
 
         </div>
-        <div class="span2"></div>
+
     </div>
 
 

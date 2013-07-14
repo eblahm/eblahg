@@ -5,7 +5,6 @@ from eblahg import landing, rss, search, pictures, article, render, sync
 app = webapp2.WSGIApplication([
         ('/', landing.main),
         ('/rss', rss.main),
-        ('/tag/([-\w]+)', search.tag),
         ('/posts/(.+)', article.main),
         ('/search', search.term),
         ('/pics/(.*)', pictures.single),
@@ -14,7 +13,7 @@ app = webapp2.WSGIApplication([
     ], debug=True)
 
 sync_agent = webapp2.WSGIApplication([
+        ('/settings', sync.main),
         ('/sync/(.+)', sync.handshake),
-        ('/dropbox', sync.main),
         ('/.+', render.not_found),
     ], debug=True)
