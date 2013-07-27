@@ -12,10 +12,12 @@ from google.appengine.ext import db
 import oauth
 
 from eblahg import models, render
-from eblahg.utility import dropbox_api, dropox_info
+from eblahg.utility import dropbox_api, dropox_info, seed_data
 from eblahg.pictures import upload_pic
 from externals.pytz.gae import pytz
 
+if models.Article.all().count() == 0:
+    seed_data()
 
 class WebHook(db.Model):
     secret = db.StringProperty()
@@ -140,17 +142,21 @@ class draft(webapp2.RequestHandler):
     def post(self, secret):
         if secret == WebHook.get_by_key_name("draft_webhook").secret:
             d = json.loads(self.request.get('payload'))
+            meta = str(d['name']).split('|')
             article = models.Article.get_by_key_name(str(d['id']))
             if article == None:
                 article = models.Article(
                     key_name=str(d['id']),
-                    title=d['name'],
-                    pub_date=datetime.now()
+                    title=meta[0].strip(),
                 )
                 article.put()
-            article.title=d['name']
+            if len(meta) > 1:
+                article.pub_date = datetime.strptime(meta[1].strip(), '%m/%d/%Y')
+            else:
+                article.pub_date = datetime.now()
+            article.title= meta[0]
             article.body=d['content']
-            article.body_html=d['content_html']
+            article.body_html = d['content_html']
             article.put()
             self.response.out.write('great, thanks!')
         else:

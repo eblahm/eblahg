@@ -34,7 +34,7 @@ var loader_gif = '<div style="text-align:center; vertical-align: middle;"><img s
     else {
         sidebar_pic = url + '?&h=' + sheight + '&w=' + swidth
     }
-    $("#sidebar_inner").html('<a href="' + url + '"><img id="unique_pic" src="' + sidebar_pic + '"></a>');
+    $("#sidebar_inner").html('<a href="' + url + '"><img id="unique_pic" src="' + sidebar_pic + '" title="'+ $("#sidebar_inner").data('title') + '"></a>');
     if (desktop_or_tablet) {if (window.screen.width > 768) {$("#unique_pic").css("width", swidth)}};
 
 

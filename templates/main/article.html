@@ -4,7 +4,7 @@
         <div class="row-fluid">
 
             <div id="ar_body" class="span8 offset2">
-
+            {% include "/templates/resources/followme_buttons.html" %}
                 <header class="fun" style="text-align: center">
                     <h1 id="ar_huge">{{ article.title }}</h1>
                     {{ article.pub_date.strftime('%d %b %y') }}
@@ -19,6 +19,9 @@
 
                 <footer>
                 {% include "/templates/resources/share_buttons.html" %}
+
+
+
                 </footer>
 
             </div>
@@ -29,6 +32,7 @@
         <div id="ar_comments" class="span8 offset2">
 
         {% include "/templates/resources/disqus.html" %}
+
 
         </div>
 

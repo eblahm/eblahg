@@ -3,12 +3,14 @@ fix_path.fix()
 import oauth
 
 import urllib
+from datetime import datetime
 import json
 from HTMLParser import HTMLParser
 
 from google.appengine.ext import db
 from google.appengine.api import urlfetch
 
+import models
 
 class dropox_info(db.Model):
     app_key = db.StringProperty()
@@ -77,3 +79,13 @@ def strip_tags(html):
     s = MLStripper()
     s.feed(html)
     return s.get_data()
+
+def seed_data():
+    p = models.Article(
+        title = "Hello World!",
+        body = "My name is Matt.  I have smart ideas.  Will you be my friend.",
+        pub_date = datetime.now()
+    )
+    p.populate_html_fields()
+    p.put()
+    return True

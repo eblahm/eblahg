@@ -7,6 +7,12 @@ p {
 }
 .fun {font-family: 'Gloria Hallelujah'}
 
+table td {
+    padding: .5em;
+    line-height: 1em;
+    vertical-align: middle;
+}
+
 /* NAVIGATION BAR */
 #my_nav {
     border-bottom: thin #777777 solid;

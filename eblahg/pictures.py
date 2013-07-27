@@ -18,27 +18,34 @@ class single(webapp2.RequestHandler):
 
         height = self.request.get('h')
         width = self.request.get('w')
+
         if height != "" and width != "":
-            sbar_height = int(float(height))
-            sbar_width = int(float(width))
+            container_height = int(float(height))
+            container_width = int(float(width))
             try:
                 img = images.Image(pic)
-                img.resize(height=sbar_height)
-                if sbar_width < img.width:
-                    width_ratio = sbar_width/float(img.width)
-                    side_offset = (1 - width_ratio)/2.0
+                if float(img.height) < float(img.width):
+                    img.resize(height=container_height)
+                    width_ratio = container_width/float(img.width)
+                    height_ratio = container_height/float(img.height)
+
+                    if container_width < img.width:
+                        side_offset = (1 - width_ratio)/2.0
+                    else:
+                        side_offset = 0
+
+                    if img.height > container_height:
+                        top_offset = (1 - height_ratio)/2.0
+                    else:
+                        top_offset = 0
+
+                    img.crop(0.0+side_offset,
+                             0.0+top_offset,
+                             1.0-side_offset,
+                             1.0-top_offset)
+                    img = img.execute_transforms(output_encoding=images.JPEG)
                 else:
-                    side_offset = 0
-                if img.height > sbar_height:
-                    height_ratio = sbar_height/float(img.height)
-                    top_offset = (1 - height_ratio)/2.0
-                else:
-                    top_offset = 0
-                img.crop(0.0+side_offset,
-                         0.0+top_offset,
-                         1.0-side_offset,
-                         1.0-top_offset)
-                img = img.execute_transforms(output_encoding=images.JPEG)
+                    img = pic
             except:
                 img = pic
         elif self.request.get('size') == 'thumbnail':
@@ -51,7 +58,8 @@ class single(webapp2.RequestHandler):
         self.response.headers['Content-Type'] = 'image/jpeg'
         self.response.out.write(img)
 
-def upload_pic(path, rev, client=dropbox_api()):
+def upload_pic(path, rev):
+    client = dropbox_api()
     this_pic = client.request_file(path)
     this_pic = mb_limit(this_pic)
     try:
@@ -88,11 +96,14 @@ def random_pic_update(template_values):
         query = models.Picture.all().filter('sidebar =', True)
         pic_keys = []
         for p in query:
-            pic_keys.append(str(p.key().name()))
+            pic_keys.append(
+                (p.title, str(p.key().name()))
+            )
         memcache.set('pic_keys', pic_keys)
         pic_keys = memcache.get('pic_keys')
 
     if len(pic_keys) > 0:
         ran_num = random.randint(0, len(pic_keys)-1)
-        template_values['random_picture_key'] = pic_keys[ran_num]
+        template_values['random_picture_key'] = pic_keys[ran_num][1]
+        template_values['random_picture_title'] = pic_keys[ran_num][0]
     return template_values
