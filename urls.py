@@ -10,10 +10,10 @@ app = webapp2.WSGIApplication([
         ('/pics/(.*)', pictures.single),
         ('/p/(.*)', sync.draft),
         ('/.+', render.not_found),
-    ], debug=True)
+    ])
 
 sync_agent = webapp2.WSGIApplication([
         ('/settings', sync.main),
         ('/sync/(.+)', sync.handshake),
         ('/.+', render.not_found),
-    ], debug=True)
+    ])
