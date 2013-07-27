@@ -41,8 +41,8 @@ def sync_datastore():
                         'path': remote['path'],
                         'rev': remote['rev'],
                     })
-                if dstore_rev != "":
-                    dstore.pop(remote['path'])
+            if remote['path'] in dstore:
+                dstore.pop(remote['path'])
 
     for deleted in dstore:
         rec = models.Picture.all().filter('path =', deleted).get()
