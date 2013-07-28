@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html itemscope itemtype="http://schema.org/Blog">
+<html itemscope itemtype="http://schema.org/Blog" >
 
 <head>
     <meta charset="utf-8">
@@ -18,19 +18,6 @@
 
     <script src="/js/main.js"></script>
     <link href="/css/style.css" rel="stylesheet">
-    <script type="text/javascript">
-      var social_html = '<div id="pover" style="text-align:center">' +
-{% if gplus %} '<a href="{{ gplus }}"><img src="/img/social/gplus.png" alt="gplus"/></a>' + {% endif %}
-{% if youtube %} '<a href="{{ youtube }}"><img src="/img/social/youtube.png" alt="youtube"/></a>' + {% endif %}
-{% if facebook %} '<a href="{{ facebook }}"><img src="/img/social/facebook.png" alt="facebook"/></a>' + {% endif %}
-{% if linkedin %} '<a href="{{ linkedin }}"><img src="/img/social/linkedin.png" alt="linkedin"/></a>' + {% endif %}
-{% if twitter_handle %}'<a href="http://twitter.com/{{ twitter_handle }}"><img src="/img/social/twitter.png" alt="twitter"/></a>' + {% endif %}
-{% if adn_handle %}'<a href="https://alpha.app.net/{{ adn_handle }}"><img src="/img/social/app_net.png" alt="app_net"/></a>' + {% endif %}
-{% if kippt %}'<a href="{{ kippt }}"><img src="/img/social/kippt.png" alt="kippt"/></a>' + {% endif %}
-{% if github %}'<a href="{{ github }}"><img width="24px" src="/img/social/github.png" alt="github"/></a>' + {% endif %}
-{% if email %}'<a href="mailto:{{ email }}" title="{{ email }}"><img width="24px" src="/img/social/email.png" alt="email"/></a>'  + {% endif %}
-        '</div>';
-    </script>
         
   {% endblock %}
 
@@ -48,7 +35,7 @@
                                 <span class="fun">
                                      a blog by <span id="ptrig" data-placement="bottom" rel="popover" href="#" >{{ author }}</span>
                                 </span>
-
+                                <span id="social_links" style="display: none" data-html="{{ social_links|e }}"></span>
                                 <form class="pull-right" id="search_form" method="GET" action="/search">
                                     <input id="search" name="term" type="text" placeholder="Search..." >
                                     <input style="display: none;" class="btn" type="submit" value="submit" />

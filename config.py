@@ -14,13 +14,13 @@ social_links = {
     'adn_handle': "eblah",
     # 'kippt': "https://kippt.com/mchalbe",
     # 'gplus': 'https://plus.google.com/116164959143674684741/',
-    'github': "https://github.com/eblahm"
+    'github': "https://github.com/eblahm",
+    'email': 'matthew.c.halbe@gmail.com',
 }
 
 settings = {
     'blog_title': "Eblahm",
     'author': 'Matt Halbe',
-    'email': 'matthew.c.halbe@gmail.com',
     'google_analytics': 'UA-11111111-1',
     'randomized_sidebar': True,
 }
