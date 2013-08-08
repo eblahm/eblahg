@@ -35,7 +35,7 @@ $(document).ready(function () {
         sidebar_pic = url + '?&h=' + sheight + '&w=' + swidth
         }
         $("#sidebar_inner").html('<a href="' + url + '"><img id="unique_pic" src="' + sidebar_pic + '" title="'+ $("#sidebar_inner").data('title') + '"></a>');
-        if (desktop_or_tablet) {if (window.screen.width > 768) {$("#unique_pic").css("width", swidth)}}
+        if (desktop_or_tablet) {if (window.screen.width > 768) {$("#unique_pic").css(  {width: swidth}  )}}
 
     };
 
@@ -43,6 +43,13 @@ $(document).ready(function () {
         $('#ptrig').popover({content:$("#social_links").data('html'), html:true});
     };
 
+    $(window).resize(function() {
+        function cwidth() {
+            return String($("#sidebar").width());
+        };
+
+        $("#unique_pic").css({width: cwidth()});
+    });
     loadRandomPic();
     loadSocialLinks();
 

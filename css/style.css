@@ -8,20 +8,19 @@ p {
 .fun {font-family: 'Gloria Hallelujah'}
 
 table td {
-    padding: .5em;
+    padding-left: .5em;
+    padding-right: .5em;
     line-height: 1em;
     vertical-align: middle;
 }
 
 /* NAVIGATION BAR */
 #my_nav {
+    left: 0;
+    position: fixed;
+    padding: 1em;
     border-bottom: thin #777777 solid;
     background-color: white;
-}
-
-#my_nav_inner {
-    margin-top:15px;
-    margin-bottom:15px;
 }
 
 #search {
@@ -29,8 +28,7 @@ table td {
     border:solid 1px #777777;
     font: bold 14px;
     padding: 6px 0 6px 35px;
-    margin-left:-35px;
-    width:100%;
+    margin-right: 10px;
 }
 
 
@@ -101,11 +99,12 @@ h1 {
 
 #unique_pic {
     position:fixed !important;
+
 }
 
 #main_container {
-    margin-top:70px;
-}
+        margin-top:70px;
+    }
 
 @media (min-width: 768px) and (max-width: 979px) {
     #unique_pic {

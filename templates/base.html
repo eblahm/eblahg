@@ -27,27 +27,32 @@
 <div class="container-fluid">
     {% block navbar %}
 
-        <div class="navbar navbar-fixed-top">
-            <div id="my_nav" class="container-fluid">
-               <div id="my_nav_inner">
 
-                                <span style="font-size:25px; font-family: 'Permanent Marker';"> <a href="/">{{ blog_title }} </a></span>
-                                <span class="fun">
-                                     a blog by <span id="ptrig" data-placement="bottom" rel="popover" href="#" >{{ author }}</span>
-                                </span>
-                                <span id="social_links" style="display: none" data-html="{{ social_links|e }}"></span>
-                                <form class="pull-right" id="search_form" method="GET" action="/search">
-                                    <input id="search" name="term" type="text" placeholder="Search..." >
-                                    <input style="display: none;" class="btn" type="submit" value="submit" />
-                                </form>
-                        </div>
+
+                <div id="my_nav" class="row-fluid">
+                    <div class="span4">
+                        <span style="font-size:25px; font-family: 'Permanent Marker';"> <a href="/">{{ blog_title }} </a></span>
+                        <span class="fun">
+                             a blog by <span id="ptrig" data-placement="bottom" rel="popover" href="#" >{{ author }}</span>
+                        </span>
+                        <span id="social_links" style="display: none" data-html="{{ social_links|e }}"></span>
+                    </div>
+                    <div class="span4">
+                        {% include "/templates/resources/followme_buttons.html" %}
+
+                    </div>
+                    <div class="span4">
+                        <form style="float: right; margin-right: 1em" id="search_form" method="GET" action="/search">
+                            <input id="search" name="term" type="text" placeholder="Search..." >
+                            <input style="display: none;" class="btn" type="submit" value="submit" />
+                        </form>
+                    </div>
                </div>
-         </div>
 
     {% endblock %}
 
     <div id="main_container" class="container-fluid">
-        <div class="row-fluid">
+        <div class="row-fluid" >
             <div class="span12">
             {% block main_container %}
                 {{ dumb_content }}
