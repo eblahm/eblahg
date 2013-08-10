@@ -31,6 +31,11 @@ table td {
     margin-right: 10px;
 }
 
+#search_form {
+    float: right;
+    margin-right: 1em
+}
+
 
 #ptrig {
     border-bottom:1px dotted;
@@ -106,6 +111,9 @@ h1 {
         margin-top:70px;
     }
 
+
+
+
 @media (min-width: 768px) and (max-width: 979px) {
     #unique_pic {
         position:inherit !important;
@@ -113,25 +121,38 @@ h1 {
     #main_container {
         margin-top:0px;
     }
+    #my_nav {
+        position: inherit;
+    }
 }
 
 
 @media (max-width: 767px) {
-
     #unique_pic {
         position:inherit !important;
     }
     #main_container {
         margin-top:0px;
     }
+    #my_nav {
+        position: inherit;
+    }
 
 }
 
-    @media (max-width: 480px) {
-        #unique_pic {
-            position:inherit !important;
-        }
-        #main_container {
-            margin-top:0px;
-        }
+@media (max-width: 480px) {
+
+    #search_form {
+        float: none;
+        margin-right: 0;
     }
+    #unique_pic {
+        position:inherit !important;
+    }
+    #main_container {
+        margin-top:0px;
+    }
+    #my_nav {
+        position: inherit;
+    }
+}
