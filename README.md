@@ -25,9 +25,8 @@ Once you clone the repository follow these steps
 
 #### tagging and date stamping
 
-tags and date are imputed in the "title" field within Draft
-the syntax for this field is `title | date:mm/dd/yyyy | tags:foo,bar`
-Date and title are optional
+Optional Article Tagging and Date Stamping can be inputed via the "title" field in Draft.
+The syntax is `title | date:mm/dd/yyyy | tags:foo,bar`
 
 acceptable examples
 - `top ten funny things`
