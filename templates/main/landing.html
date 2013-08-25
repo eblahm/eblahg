@@ -9,9 +9,14 @@
                 </div>
 
                 <div id="feed" class="span8" style="padding-bottom: 50px">
+                    {% if tag %}<h3 class="fun">posts tagged with <em>"{{ tag }}"</em>:</h3>{% endif %}
+                    {% if term %}<h3 class="fun">search results for: <em>{{ term }}</em>:</h3>{% endif %}
 
-
+                    {% if count > 0 %}
                         {% include "/templates/main/article_links.html" %}
+                    {% else %}
+                        <h1 class="ar_title"> your search returned zero results! Sorry :(</h1>
+                    {% endif %}
 
                 </div>
 

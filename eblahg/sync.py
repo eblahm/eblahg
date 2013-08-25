@@ -142,22 +142,47 @@ class draft(webapp2.RequestHandler):
     def post(self, secret):
         if secret == WebHook.get_by_key_name("draft_webhook").secret:
             d = json.loads(self.request.get('payload'))
-            meta = str(d['name']).split('|')
+
+            title = d['name'].split("|")[0]
             article = models.Article.get_by_key_name(str(d['id']))
             if article == None:
                 article = models.Article(
                     key_name=str(d['id']),
-                    title=meta[0].strip(),
+                    title=title.strip(),
                 )
-                article.put()
-            if len(meta) > 1:
-                article.pub_date = datetime.strptime(meta[1].strip(), '%m/%d/%Y')
+
+            # my meta syntax == "title | date:03/12/1980 | tags: foo, bar
+            if d['name'].split("|") > 1:
+                meta = d['name'].split("|")[1:]
             else:
-                article.pub_date = datetime.now()
-            article.title= meta[0]
-            article.body=d['content']
+                meta = []
+            for p in meta:
+                key = p.split(":")[0]
+                value = p.split(":")[1]
+
+                if key == 'date':
+                    article.pub_date = datetime.strptime(value.strip(), '%m/%d/%Y')
+
+                if key == 'tags':
+                    tag_names = value.lower().split(',')
+                    # tags are stored by reference, not string
+                    tag_keys = []
+                    for t in tag_names:
+                        t = t.strip()
+                        tslug = models.slugify(t)
+                        tag = models.Tag.get_by_key_name(tslug)
+                        if tag == None:
+                            tag = models.Tag(key_name=tslug, name=t)
+                            tag.put()
+                        tag_keys.append(tag.key())
+
+                    article.tags = tag_keys
+
+            article.body = d['content']
             article.body_html = d['content_html']
+
             article.put()
+
             self.response.out.write('great, thanks!')
         else:
             self.response.out.write('fail')

@@ -1,9 +1,12 @@
 {% for article in results %}
 <div data-url="/posts/{{ article.slug }}" class="ar">
-    <div class="ar_title"><a href="posts/{{ article.slug }}">{{ article.title }}</a></div>
+    <div class="ar_title"><a href="/posts/{{ article.slug }}">{{ article.title }}</a></div>
         {% if article.snip %}<p>{{ article.snip }}</p>{% endif %}
     <div class="ar_details">{{ article.pub_date.strftime('%d %b %y') }}
         <span class="spc">|</span>{{ article.word_count }} words
+        {% if article.tags not in [[], None] %}
+            <span class="spc">|</span>{% for t in article.tags %}{% set trec = Tag.get(t) %}{% if loop.index > 1 %}, {% endif %}<a href="/tag/{{ trec.key().name() }}">{{ trec.name }}</a>{% endfor %}
+        {% endif %}
     </div>
 </div>
 {% endfor %}

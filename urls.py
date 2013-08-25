@@ -6,6 +6,7 @@ app = webapp2.WSGIApplication([
         ('/', landing.main),
         ('/rss', rss.main),
         ('/posts/(.+)', article.main),
+        (r'/(tag)/(.*)', landing.main),
         ('/search', search.term),
         ('/pics/(.*)', pictures.single),
         ('/p/(.*)', sync.draft),

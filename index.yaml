@@ -1,1 +1,6 @@
 indexes:
+- kind: Article
+  properties:
+  - name: collection
+  - name: pub_date
+    direction: desc

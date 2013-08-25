@@ -4,9 +4,18 @@
         <div class="row-fluid">
 
             <div id="ar_body" class="span8 offset2">
+                <header style="text-align: left">
+                    <table>
+                    <tr><th style="text-align: right">date:</th><td class="fun" >{{ article.pub_date.strftime('%d %b %y') }}</td></tr>
+                    <tr><th style="text-align: right">word count: </th><td class="fun">{{ article.word_count }}</td></tr>
+                    {% if article.tags not in [[], None] %}
+                        <tr><th style="text-align: right">file under: </th><td class="fun">{% for t in article.tags %}{% set trec = Tag.get(t) %}{% if loop.index > 1 %}, {% endif %}<a href="/tag/{{ trec.key().name() }}">{{ trec.name }}</a>{% endfor %}</td></tr>
+                    {% endif %}
+                    </table>
+                </header>
                 <header class="fun" style="text-align: center">
                     <h1 id="ar_huge">{{ article.title }}</h1>
-                    {{ article.pub_date.strftime('%d %b %y') }}
+
                 </header>
 
                 <article>

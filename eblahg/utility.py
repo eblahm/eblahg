@@ -81,10 +81,13 @@ def strip_tags(html):
     return s.get_data()
 
 def seed_data():
+    t = models.Tag(key_name='foo', name='foo')
+    t.put()
     p = models.Article(
         title = "Hello World!",
         body = "My name is Matt.  I have smart ideas.  Will you be my friend.",
-        pub_date = datetime.now()
+        pub_date = datetime.now(),
+        tags = [t.key()]
     )
     p.populate_html_fields()
     p.put()

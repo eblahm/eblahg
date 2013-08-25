@@ -4,6 +4,7 @@ import render
 import utility
 import random
 import pictures
+from models import Tag
 from google.appengine.ext import db
 from google.appengine.api import search
 
@@ -38,6 +39,7 @@ class term(webapp2.RequestHandler):
     def get(self):
         v = {}
         term = self.request.get("term")
+        v['term'] = term
         text_query = full_text_query(term)
         posts = []
         for i in text_query:
@@ -59,7 +61,11 @@ class term(webapp2.RequestHandler):
 
         v = {"results":posts}
         v['title'] = "Search Results"
-        v['count'] = 0
+        if len(posts) >= 1:
+            v['count'] = 1
+        else:
+            v['count'] = 0
         v['offset'] = 0
+        v['Tag'] = Tag
         v = pictures.random_pic_update(v)
         render.page(self, "/templates/main/landing.html", v)

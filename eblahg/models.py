@@ -19,13 +19,18 @@ def slugify(value):
     value = unicode(re.sub('[^\w\s-]', '', value).strip().lower())
     return re.sub('[-\s]+', '-', value)
 
+class Tag(db.Model):
+    name = db.StringProperty()
+
 class Article(db.Model):
     title = db.StringProperty()
     body = db.TextProperty()
     body_html = db.TextProperty()
     slug = db.StringProperty()
     word_count = db.IntegerProperty()
-    pub_date = db.DateTimeProperty()
+    pub_date = db.DateTimeProperty(auto_now_add=True)
+    collection = db.StringProperty(choices=["blog", "general"], default="blog") # blog == /posts/slug, general == /slug
+    tags = db.ListProperty(db.Key, default=[])
 
     def put(self):
         if self.body != None:
