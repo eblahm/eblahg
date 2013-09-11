@@ -7,21 +7,24 @@ Eblahg is my dedicated blogging app for the Google App Engine platform.  It uses
 - [Google App Engine (GAE) SDK](https://developers.google.com/appengine/downloads)
 - [GAE App ID](https://appengine.google.com/)
 - Dropbox Developer account with [your own App Token and Secret](https://www.dropbox.com/developers/apps)
+- a [Draft](https://draftin.com/) Account
 
 #### Getting Started...
 Once you clone the repository follow these steps
 
 1. Edit app.yaml and config.py to reflect your app's info
 
-2. Deploy the code to App Engine using the SDK
+2. Deploy to App Engine using the SDK
 
 3. Visit /settings and fill in your dropbox info
 
 4. Click the "sync" button.  This will create the file structure within the Apps folder of your Dropbox
 
-5. add images to the "pics" folders.  Pictures in this folder form the basis of the random sidebar
+5. add images to the "pics" folders in your Dropbox.  Pictures in this folder form the basis of the random sidebar
 
-6. log into Draft and paste [your webhook url](https://draftin.com/publishers) (hint: your secret webhook url is locatedo the /settings page)
+6. log into your Draft settings and paste [your webhook url](https://draftin.com/publishers) (hint: your secret webhook url is locatedo the /settings page)
+
+7. Create a document in [Draft](https://draftin.com/) and click publish!! 
 
 #### tagging and date stamping
 
