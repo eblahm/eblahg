@@ -14,7 +14,7 @@ Once you clone the repository follow these steps
 
 1. Edit app.yaml and config.py to reflect your app's info
 
-2. `appcfg.py update /path/to/eblahg` note: appcfg.py command is provided by the GAE SDK
+2. `appcfg.py update /path/to/eblahg` note: appcfg.py shell command is installed w/ GAE SDK
 
 3. Visit http://yourappid.appspot.com/settings and fill in your dropbox info
 
