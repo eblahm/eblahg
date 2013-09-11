@@ -8,7 +8,7 @@ Eblahg is my dedicated blogging app for the Google App Engine platform.  It uses
 - [GAE App ID](https://appengine.google.com/)
 - Dropbox Developer account with [your own App Token and Secret](https://www.dropbox.com/developers/apps)
 
-#### How to Blog...
+#### Getting Started...
 Once you clone the repository follow these steps
 
 1. Edit app.yaml and config.py to reflect your app's info
