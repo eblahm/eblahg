@@ -10,7 +10,6 @@ Eblahg is my dedicated blogging app for the Google App Engine platform.  It uses
 - a [Draft](https://draftin.com/) Account
 
 #### Getting Started...
-Once you clone the repository follow these steps
 
 1. Edit app.yaml and config.py to reflect your app's info
 
@@ -37,7 +36,7 @@ acceptable examples
 - `top ten funny things | tags:humor,top 10 lists | date:03/19/2014`
 
 #### Credits:
-Twitter Bootstrap
+Twitter Bootstrap  
 Jquery  
 Mike Knapp - [AppEngine-OAuth-Library](https://github.com/mikeknapp/AppEngine-OAuth-Library)  
 Joey Bratton [joeyb-blog](https://github.com/joeyb/joeyb-blog)  
